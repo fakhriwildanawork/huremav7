@@ -113,8 +113,94 @@ const ScheduleMain: React.FC = () => {
     }
   };
 
+  const getScheduleStatus = (schedule: Schedule) => {
+    if (schedule.type === 1 || schedule.type === 2) return 'active';
+    if (!schedule.start_date || !schedule.end_date) return 'active';
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const [sYear, sMonth, sDay] = schedule.start_date.split('-').map(Number);
+    const [eYear, eMonth, eDay] = schedule.end_date.split('-').map(Number);
+    
+    const start = new Date(sYear, sMonth - 1, sDay);
+    const end = new Date(eYear, eMonth - 1, eDay);
+    
+    if (today > end) return 'inactive';
+    if (today < start) return 'upcoming';
+    return 'active';
+  };
+
+  const activeSchedules = filteredSchedules.filter(s => getScheduleStatus(s) === 'active');
+  const upcomingSchedules = filteredSchedules.filter(s => getScheduleStatus(s) === 'upcoming');
+  const inactiveSchedules = filteredSchedules.filter(s => getScheduleStatus(s) === 'inactive');
+
+  const renderScheduleSection = (title: string, items: Schedule[], icon: React.ReactNode, isMuted: boolean = false) => {
+    if (items.length === 0) return null;
+    return (
+      <div className={`space-y-4 ${isMuted ? 'opacity-60' : ''}`}>
+        <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+          {icon}
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{title}</h2>
+          <span className="ml-auto text-[10px] font-bold bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">
+            {items.length}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.map(schedule => {
+            const badge = getBadgeType(schedule.type);
+            return (
+              <div 
+                key={schedule.id}
+                className={`bg-white border border-gray-100 p-5 rounded-md shadow-sm hover:shadow-md transition-all border-l-4 ${isMuted ? 'border-l-gray-300' : 'border-l-[#006E62]'} group`}
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-gray-800 text-sm group-hover:text-[#006E62]">{schedule.name}</h3>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${badge.color}`}>{badge.label}</span>
+                </div>
+                
+                <div className="space-y-2 mb-4">
+                   {schedule.type !== 3 && (
+                    <div className="flex items-center gap-2 text-[11px] text-gray-500">
+                        <Clock size={12} className="text-gray-300" /> 
+                        Toleransi: <span className="font-bold text-gray-700">{schedule.tolerance_checkin_minutes || 0} In / {schedule.tolerance_minutes || 0} Out</span>
+                    </div>
+                   )}
+                   {schedule.type >= 3 && (
+                      <div className="flex items-center gap-2 text-[11px] text-gray-500">
+                        <Calendar size={12} className="text-gray-300" />
+                        Periode: <span className="font-bold text-gray-700">{schedule.start_date} s/d {schedule.end_date}</span>
+                      </div>
+                   )}
+                   <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                      {(schedule as any).location_ids?.length || 0} Lokasi Terdaftar
+                   </div>
+                </div>
+
+                <div className="flex gap-2 pt-3 border-t border-gray-50">
+                   <button 
+                    onClick={() => { setEditingSchedule(schedule); setShowForm(true); }}
+                    className={`flex-1 text-[10px] font-bold uppercase ${isMuted ? 'text-gray-400 border-gray-100 hover:bg-gray-50' : 'text-[#006E62] border-emerald-100 hover:bg-emerald-50'} py-1.5 rounded transition-colors border`}
+                   >
+                     Ubah
+                   </button>
+                   <button 
+                    onClick={() => handleDelete(schedule.id)}
+                    className="flex-1 text-[10px] font-bold uppercase text-red-500 hover:bg-red-50 py-1.5 rounded transition-colors border border-red-100"
+                   >
+                     Hapus
+                   </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       {isSaving && <LoadingSpinner />}
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -150,54 +236,10 @@ const ScheduleMain: React.FC = () => {
           <p className="text-lg">Belum ada data jadwal.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSchedules.map(schedule => {
-            const badge = getBadgeType(schedule.type);
-            return (
-              <div 
-                key={schedule.id}
-                className="bg-white border border-gray-100 p-5 rounded-md shadow-sm hover:shadow-md transition-all border-l-4 border-l-[#006E62] group"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-bold text-gray-800 text-sm group-hover:text-[#006E62]">{schedule.name}</h3>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${badge.color}`}>{badge.label}</span>
-                </div>
-                
-                <div className="space-y-2 mb-4">
-                   {schedule.type !== 3 && (
-                    <div className="flex items-center gap-2 text-[11px] text-gray-500">
-                        <Clock size={12} className="text-gray-300" /> 
-                        Toleransi: <span className="font-bold text-gray-700">{schedule.tolerance_checkin_minutes || 0} In / {schedule.tolerance_minutes || 0} Out</span>
-                    </div>
-                   )}
-                   {schedule.type >= 3 && (
-                      <div className="flex items-center gap-2 text-[11px] text-gray-500">
-                        <Calendar size={12} className="text-gray-300" />
-                        Periode: <span className="font-bold text-gray-700">{schedule.start_date} s/d {schedule.end_date}</span>
-                      </div>
-                   )}
-                   <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                      {(schedule as any).location_ids?.length || 0} Lokasi Terdaftar
-                   </div>
-                </div>
-
-                <div className="flex gap-2 pt-3 border-t border-gray-50">
-                   <button 
-                    onClick={() => { setEditingSchedule(schedule); setShowForm(true); }}
-                    className="flex-1 text-[10px] font-bold uppercase text-[#006E62] hover:bg-emerald-50 py-1.5 rounded transition-colors border border-emerald-100"
-                   >
-                     Ubah
-                   </button>
-                   <button 
-                    onClick={() => handleDelete(schedule.id)}
-                    className="flex-1 text-[10px] font-bold uppercase text-red-500 hover:bg-red-50 py-1.5 rounded transition-colors border border-red-100"
-                   >
-                     Hapus
-                   </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="space-y-12">
+          {renderScheduleSection('Jadwal Aktif & Operasional', activeSchedules, <Clock size={14} className="text-[#006E62]" />)}
+          {renderScheduleSection('Jadwal Akan Datang', upcomingSchedules, <Calendar size={14} className="text-amber-500" />)}
+          {renderScheduleSection('Riwayat Jadwal (Non-Aktif)', inactiveSchedules, <CalendarClock size={14} className="text-gray-400" />, true)}
         </div>
       )}
 
