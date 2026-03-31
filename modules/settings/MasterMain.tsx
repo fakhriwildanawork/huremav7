@@ -64,10 +64,10 @@ const MasterMain: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex items-center gap-4">
         <div className="w-12 h-12 bg-[#006E62]/10 rounded-xl flex items-center justify-center text-[#006E62]">
-          <Database size={28} />
+          <Settings size={28} />
         </div>
         <div>
           <h2 className="text-xl font-bold text-gray-800 tracking-tight">Master Aplikasi</h2>
@@ -75,105 +75,40 @@ const MasterMain: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        {/* Kebijakan Lembur */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/30 flex items-center gap-3">
-            <Timer size={18} className="text-amber-500" />
-            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Workflow Presensi Lembur</h3>
-          </div>
-          
-          <div className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="flex-1 space-y-1">
-                <h4 className="text-sm font-bold text-gray-800">Kebijakan Persetujuan Lembur</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Tentukan bagaimana sistem menangani data presensi lembur yang masuk setelah karyawan melakukan Check-Out Lembur.
-                </p>
-              </div>
-              
-              <div className="flex bg-gray-100 p-1 rounded-xl w-fit shrink-0">
-                <button 
-                  onClick={() => handleUpdate('ot_approval_policy', 'manual')}
-                  className={`px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.ot_approval_policy === 'manual' ? 'bg-white text-[#006E62] shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
-                >
-                  Manual (Antrean)
-                </button>
-                <button 
-                  onClick={() => handleUpdate('ot_approval_policy', 'auto')}
-                  className={`px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.ot_approval_policy === 'auto' ? 'bg-[#006E62] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
-                >
-                  Otomatis (ACC)
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className={`p-4 rounded-xl border transition-all ${settings.ot_approval_policy === 'manual' ? 'bg-emerald-50 border-[#006E62]/30' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                   <ShieldCheck size={16} className={settings.ot_approval_policy === 'manual' ? 'text-[#006E62]' : 'text-gray-400'} />
-                   <span className="text-[11px] font-bold uppercase tracking-tight text-gray-700">Mode Manual (Default)</span>
-                </div>
-                <p className="text-[10px] text-gray-500 leading-relaxed italic">
-                  Data lembur masuk ke modul "Pengajuan" dengan status <span className="text-orange-600 font-bold">PENDING</span>. Butuh verifikasi Admin/Supervisor untuk dianggap valid.
-                </p>
-              </div>
-
-              <div className={`p-4 rounded-xl border transition-all ${settings.ot_approval_policy === 'auto' ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                   <AlertCircle size={16} className={settings.ot_approval_policy === 'auto' ? 'text-amber-600' : 'text-gray-400'} />
-                   <span className="text-[11px] font-bold uppercase tracking-tight text-gray-700">Mode Otomatis (Instan)</span>
-                </div>
-                <p className="text-[10px] text-gray-500 leading-relaxed italic">
-                  Data lembur langsung dianggap <span className="text-[#006E62] font-bold">VALID / DISETUJUI</span> saat Check-Out. Tidak melewati antrean verifikasi di modul Pengajuan.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-4 flex gap-3 items-start border-t border-gray-50">
-               <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
-               <p className="text-[10px] text-gray-400 font-medium leading-relaxed italic">
-                 Perubahan kebijakan akan berdampak langsung pada setiap presensi lembur baru. Data lama yang sudah ada di antrean tidak akan terpengaruh.
-               </p>
-            </div>
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Kebijakan Dispensasi */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/30 flex items-center gap-3">
             <Timer size={18} className="text-blue-500" />
             <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Kebijakan Dispensasi Presensi</h3>
           </div>
           
-          <div className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="flex-1 space-y-1">
-                <h4 className="text-sm font-bold text-gray-800">Batas Hari Pengajuan (X Hari)</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Tentukan berapa hari kebelakang pegawai diperbolehkan mengajukan dispensasi untuk data presensi yang bermasalah.
-                </p>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <input 
-                  type="number"
-                  min="1"
-                  max="31"
-                  value={settings.dispensation_window_days || 7}
-                  onChange={(e) => setSettings(prev => ({ ...prev, dispensation_window_days: parseInt(e.target.value) }))}
-                  className="w-20 px-3 py-2 rounded-xl border border-gray-200 text-sm font-bold text-center focus:ring-2 focus:ring-[#006E62] focus:border-transparent outline-none"
-                />
-                <button 
-                  onClick={() => handleUpdate('dispensation_window_days', settings.dispensation_window_days || 7)}
-                  className="bg-[#006E62] text-white p-2.5 rounded-xl shadow-md hover:bg-[#005c52] transition-all"
-                >
-                  <Save size={18} />
-                </button>
-              </div>
+          <div className="p-6 space-y-6 flex-1 flex flex-col">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-gray-800">Batas Hari Pengajuan (X Hari)</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Tentukan berapa hari kebelakang pegawai diperbolehkan mengajukan dispensasi untuk data presensi yang bermasalah.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <input 
+                type="number"
+                min="1"
+                max="31"
+                value={settings.dispensation_window_days || 7}
+                onChange={(e) => setSettings(prev => ({ ...prev, dispensation_window_days: parseInt(e.target.value) }))}
+                className="w-20 px-3 py-2 rounded-xl border border-gray-200 text-sm font-bold text-center focus:ring-2 focus:ring-[#006E62] focus:border-transparent outline-none"
+              />
+              <button 
+                onClick={() => handleUpdate('dispensation_window_days', settings.dispensation_window_days || 7)}
+                className="bg-[#006E62] text-white p-2.5 rounded-xl shadow-md hover:bg-[#005c52] transition-all"
+              >
+                <Save size={18} />
+              </button>
             </div>
 
-            <div className="pt-4 flex gap-3 items-start border-t border-gray-50">
+            <div className="mt-auto pt-4 flex gap-3 items-start border-t border-gray-50">
                <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
                <p className="text-[10px] text-gray-400 font-medium leading-relaxed italic">
                  Nilai ini akan membatasi daftar presensi yang muncul saat pegawai ingin membuat pengajuan dispensasi baru.
@@ -182,58 +117,124 @@ const MasterMain: React.FC = () => {
           </div>
         </div>
 
+        {/* Kebijakan Lembur */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/30 flex items-center gap-3">
+            <Timer size={18} className="text-amber-500" />
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Workflow Presensi Lembur</h3>
+          </div>
+          
+          <div className="p-6 space-y-6 flex-1 flex flex-col">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-gray-800">Kebijakan Persetujuan Lembur</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Tentukan bagaimana sistem menangani data presensi lembur yang masuk setelah karyawan melakukan Check-Out Lembur.
+              </p>
+            </div>
+            
+            <div className="flex bg-gray-100 p-1 rounded-xl w-full">
+              <button 
+                onClick={() => handleUpdate('ot_approval_policy', 'manual')}
+                className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.ot_approval_policy === 'manual' ? 'bg-white text-[#006E62] shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Manual (Antrean)
+              </button>
+              <button 
+                onClick={() => handleUpdate('ot_approval_policy', 'auto')}
+                className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.ot_approval_policy === 'auto' ? 'bg-[#006E62] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Otomatis (ACC)
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className={`p-3 rounded-xl border transition-all ${settings.ot_approval_policy === 'manual' ? 'bg-emerald-50 border-[#006E62]/30' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                   <ShieldCheck size={14} className={settings.ot_approval_policy === 'manual' ? 'text-[#006E62]' : 'text-gray-400'} />
+                   <span className="text-[10px] font-bold uppercase tracking-tight text-gray-700">Mode Manual (Default)</span>
+                </div>
+                <p className="text-[9px] text-gray-500 leading-relaxed italic">
+                  Data lembur masuk ke modul "Pengajuan" dengan status <span className="text-orange-600 font-bold">PENDING</span>. Butuh verifikasi Admin/Supervisor untuk dianggap valid.
+                </p>
+              </div>
+
+              <div className={`p-3 rounded-xl border transition-all ${settings.ot_approval_policy === 'auto' ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                   <AlertCircle size={14} className={settings.ot_approval_policy === 'auto' ? 'text-amber-600' : 'text-gray-400'} />
+                   <span className="text-[10px] font-bold uppercase tracking-tight text-gray-700">Mode Otomatis (Instan)</span>
+                </div>
+                <p className="text-[9px] text-gray-500 leading-relaxed italic">
+                  Data lembur langsung dianggap <span className="text-[#006E62] font-bold">VALID / DISETUJUI</span> saat Check-Out. Tidak melewati antrean verifikasi di modul Pengajuan.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-auto pt-4 flex gap-3 items-start border-t border-gray-50">
+               <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
+               <p className="text-[10px] text-gray-400 font-medium leading-relaxed italic">
+                 Perubahan kebijakan akan berdampak langsung pada setiap presensi lembur baru. Data lama yang sudah ada di antrean tidak akan terpengaruh.
+               </p>
+            </div>
+          </div>
+        </div>
+
         {/* Kebijakan Libur Mandiri */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/30 flex items-center gap-3">
             <Settings size={18} className="text-emerald-500" />
             <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Workflow Libur Mandiri</h3>
           </div>
           
-          <div className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="flex-1 space-y-1">
-                <h4 className="text-sm font-bold text-gray-800">Kebijakan Persetujuan Libur</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Tentukan apakah pengajuan libur mandiri (untuk jadwal Fleksibel/Dinamis) harus diverifikasi admin atau langsung disetujui sistem.
-                </p>
-              </div>
-              
-              <div className="flex bg-gray-100 p-1 rounded-xl w-fit shrink-0">
-                <button 
-                  onClick={() => handleUpdate('leave_approval_policy', 'manual')}
-                  className={`px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.leave_approval_policy === 'manual' ? 'bg-white text-[#006E62] shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
-                >
-                  Verifikasi Admin
-                </button>
-                <button 
-                  onClick={() => handleUpdate('leave_approval_policy', 'auto')}
-                  className={`px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.leave_approval_policy === 'auto' ? 'bg-[#006E62] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
-                >
-                  Langsung ACC
-                </button>
-              </div>
+          <div className="p-6 space-y-6 flex-1 flex flex-col">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-gray-800">Kebijakan Persetujuan Libur</h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Tentukan apakah pengajuan libur mandiri (untuk jadwal Fleksibel/Dinamis) harus diverifikasi admin atau langsung disetujui sistem.
+              </p>
+            </div>
+            
+            <div className="flex bg-gray-100 p-1 rounded-xl w-full">
+              <button 
+                onClick={() => handleUpdate('leave_approval_policy', 'manual')}
+                className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.leave_approval_policy === 'manual' ? 'bg-white text-[#006E62] shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Verifikasi Admin
+              </button>
+              <button 
+                onClick={() => handleUpdate('leave_approval_policy', 'auto')}
+                className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${settings.leave_approval_policy === 'auto' ? 'bg-[#006E62] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Langsung ACC
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className={`p-4 rounded-xl border transition-all ${settings.leave_approval_policy === 'manual' ? 'bg-emerald-50 border-[#006E62]/30' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                   <ShieldCheck size={16} className={settings.leave_approval_policy === 'manual' ? 'text-[#006E62]' : 'text-gray-400'} />
-                   <span className="text-[11px] font-bold uppercase tracking-tight text-gray-700">Mode Verifikasi</span>
+            <div className="space-y-3">
+              <div className={`p-3 rounded-xl border transition-all ${settings.leave_approval_policy === 'manual' ? 'bg-emerald-50 border-[#006E62]/30' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                   <ShieldCheck size={14} className={settings.leave_approval_policy === 'manual' ? 'text-[#006E62]' : 'text-gray-400'} />
+                   <span className="text-[10px] font-bold uppercase tracking-tight text-gray-700">Mode Verifikasi</span>
                 </div>
-                <p className="text-[10px] text-gray-500 leading-relaxed italic">
+                <p className="text-[9px] text-gray-500 leading-relaxed italic">
                   Pengajuan libur masuk dengan status <span className="text-orange-600 font-bold">PENDING</span>. Butuh persetujuan manual dari Admin.
                 </p>
               </div>
 
-              <div className={`p-4 rounded-xl border transition-all ${settings.leave_approval_policy === 'auto' ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                   <AlertCircle size={16} className={settings.leave_approval_policy === 'auto' ? 'text-amber-600' : 'text-gray-400'} />
-                   <span className="text-[11px] font-bold uppercase tracking-tight text-gray-700">Mode Otomatis</span>
+              <div className={`p-3 rounded-xl border transition-all ${settings.leave_approval_policy === 'auto' ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                   <AlertCircle size={14} className={settings.leave_approval_policy === 'auto' ? 'text-amber-600' : 'text-gray-400'} />
+                   <span className="text-[10px] font-bold uppercase tracking-tight text-gray-700">Mode Otomatis</span>
                 </div>
-                <p className="text-[10px] text-gray-500 leading-relaxed italic">
+                <p className="text-[9px] text-gray-500 leading-relaxed italic">
                   Pengajuan libur langsung berstatus <span className="text-[#006E62] font-bold">DISETUJUI</span>. Sistem akan otomatis memproses tanpa antrean.
                 </p>
               </div>
+            </div>
+
+            <div className="mt-auto pt-4 flex gap-3 items-start border-t border-gray-50">
+               <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
+               <p className="text-[10px] text-gray-400 font-medium leading-relaxed italic">
+                 Pengaturan ini berlaku untuk jadwal Fleksibel & Dinamis. Pengajuan baru akan mengikuti kebijakan ini.
+               </p>
             </div>
           </div>
         </div>

@@ -177,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isCollapsed,
                 {isAdmin && (
                   <NavItem 
                     id="master_app" 
-                    icon={Database} 
+                    icon={Settings} 
                     label="Master Aplikasi" 
                     indent 
                     activeTab={activeTab}
