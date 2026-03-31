@@ -22,6 +22,8 @@ import HealthDetailModal from './HealthDetailModal';
 import CertificationDetailModal from '../certification/CertificationDetailModal';
 import WarningDetailModal from './WarningDetailModal';
 import TerminationDetailModal from './TerminationDetailModal';
+import LocationViewModal from './components/LocationViewModal';
+import ScheduleViewModal from './components/ScheduleViewModal';
 
 const WhatsAppIcon = () => (
   <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" className="text-[#25D366] shrink-0">
@@ -71,6 +73,8 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
   const [selectedCertDetail, setSelectedCertDetail] = useState<AccountCertification | null>(null);
   const [selectedWarningDetail, setSelectedWarningDetail] = useState<WarningLog | null>(null);
   const [selectedTerminationDetail, setSelectedTerminationDetail] = useState<TerminationLog | null>(null);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   
   // Media Preview States
   const [previewMedia, setPreviewMedia] = useState<{ url: string, title: string, type: 'image' | 'qr' } | null>(null);
@@ -333,7 +337,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
     </div>
   );
 
-  const DataRow = ({ label, value, isFile = false, isPhone = false, isEmail = false }: { label: string, value: any, isFile?: boolean, isPhone?: boolean, isEmail?: boolean }) => (
+  const DataRow = ({ label, value, isFile = false, isPhone = false, isEmail = false, onClick, isClickable = false }: { label: string, value: any, isFile?: boolean, isPhone?: boolean, isEmail?: boolean, onClick?: () => void, isClickable?: boolean }) => (
     <div>
       <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-0.5">{label}</p>
       {isFile && value ? (
@@ -362,6 +366,13 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         >
           {value}
         </a>
+      ) : isClickable && value && value !== '-' ? (
+        <button 
+          onClick={onClick}
+          className="text-xs text-[#006E62] font-bold leading-tight hover:underline text-left"
+        >
+          {value}
+        </button>
       ) : (
         <p className="text-xs text-gray-700 font-medium leading-tight">{value || '-'}</p>
       )}
@@ -405,7 +416,17 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
           </div>
           <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">{currentPosition} • {currentGrade} • {account.internal_nik}</p>
           <div className="flex flex-wrap gap-4 pt-2">
-             <div className="flex items-center gap-1.5 text-xs text-gray-600"><MapPin size={14} className="text-gray-400" /> {currentLocation}</div>
+             <div className="flex items-center gap-1.5 text-xs text-gray-600">
+               <MapPin size={14} className="text-gray-400" /> 
+               {account.location ? (
+                 <button 
+                   onClick={() => setShowLocationModal(true)}
+                   className="hover:text-[#006E62] hover:underline transition-colors font-bold text-[#006E62]"
+                 >
+                   {currentLocation}
+                 </button>
+               ) : currentLocation}
+             </div>
              <div className="flex items-center gap-1.5 text-xs text-gray-600">
                <Mail size={14} className="text-gray-400" /> 
                {account.email ? (
@@ -475,7 +496,12 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
              <DataRow label="Jabatan" value={currentPosition} />
              <DataRow label="Departemen" value={currentGrade} />
              <DataRow label="NIK Internal" value={account.internal_nik} />
-             <DataRow label="Jadwal" value={account.schedule_type} />
+             <DataRow 
+               label="Jadwal" 
+               value={account.schedule_type} 
+               isClickable={account.schedule && account.schedule_type !== 'FLEKSIBEL' && account.schedule_type !== 'DINAMIS'}
+               onClick={() => setShowScheduleModal(true)}
+             />
              <DataRow label="Tanggal Bergabung" value={formatDate(account.start_date || '')} />
              <DataRow label="Estimasi Berakhir" value={account.end_date ? formatDate(account.end_date) : 'Aktif'} />
           </div>
@@ -971,6 +997,20 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
             setSelectedTerminationDetail(null);
             setShowTerminationForm(true);
           } : undefined}
+        />
+      )}
+
+      {showLocationModal && account.location && (
+        <LocationViewModal
+          location={account.location}
+          onClose={() => setShowLocationModal(false)}
+        />
+      )}
+
+      {showScheduleModal && account.schedule && (
+        <ScheduleViewModal
+          schedule={account.schedule}
+          onClose={() => setShowScheduleModal(false)}
         />
       )}
     </div>
