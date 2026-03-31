@@ -36,6 +36,11 @@ const getWhatsAppLink = (phone: string) => {
   return `https://wa.me/${finalPhone}`;
 };
 
+const getGmailLink = (email: string) => {
+  if (!email) return '#';
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
+};
+
 interface AccountDetailProps {
   id: string;
   onClose: () => void;
@@ -350,7 +355,9 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         </a>
       ) : isEmail && value && value !== '-' ? (
         <a 
-          href={`mailto:${value}`}
+          href={getGmailLink(value)}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-xs text-gray-700 font-medium leading-tight hover:text-[#006E62] transition-colors hover:underline"
         >
           {value}
@@ -402,7 +409,14 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
              <div className="flex items-center gap-1.5 text-xs text-gray-600">
                <Mail size={14} className="text-gray-400" /> 
                {account.email ? (
-                 <a href={`mailto:${account.email}`} className="hover:text-[#006E62] hover:underline transition-colors">{account.email}</a>
+                 <a 
+                   href={getGmailLink(account.email)} 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   className="hover:text-[#006E62] hover:underline transition-colors"
+                 >
+                   {account.email}
+                 </a>
                ) : '-'}
              </div>
              <div className="flex items-center gap-1.5 text-xs text-gray-600">
