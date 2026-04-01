@@ -19,6 +19,7 @@ const LocationMain: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const [administrations, setAdministrations] = useState<Record<string, LocationAdministration[]>>({});
 
@@ -109,6 +110,7 @@ const LocationMain: React.FC = () => {
     try {
       const updated = await locationService.update(id, input);
       setLocations(prev => prev.map(loc => loc.id === id ? updated : loc));
+      setRefreshTrigger(prev => prev + 1);
       setEditingLocation(null);
       setShowForm(false);
       Swal.fire({
@@ -172,6 +174,8 @@ const LocationMain: React.FC = () => {
           onClose={() => setSelectedLocationId(null)}
           onEdit={(loc) => { setEditingLocation(loc); setShowForm(true); }}
           onDelete={(id) => handleDelete(id)}
+          onRefresh={fetchAllAdministrations}
+          refreshTrigger={refreshTrigger}
         />
         
         {/* Modals - Dipindahkan ke sini juga agar muncul saat di Detail View */}

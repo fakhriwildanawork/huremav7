@@ -15,9 +15,11 @@ interface LocationDetailProps {
   onClose: () => void;
   onEdit: (location: Location) => void;
   onDelete: (id: string) => void;
+  onRefresh?: () => void;
+  refreshTrigger?: number;
 }
 
-const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, onDelete }) => {
+const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, onDelete, onRefresh, refreshTrigger }) => {
   const [location, setLocation] = useState<Location | null>(null);
   const [administrations, setAdministrations] = useState<LocationAdministration[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +31,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [id, refreshTrigger]);
 
   useEffect(() => {
     if (location && !mapRef.current) {
@@ -88,6 +90,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
       });
       setAdministrations(prev => [newAdmin, ...prev]);
       
+      if (onRefresh) onRefresh();
+      
       setShowAdminForm(false);
       setEditingAdmin(null);
       Swal.fire({
@@ -121,6 +125,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
       try {
         await locationService.deleteAdministration(adminId);
         setAdministrations(prev => prev.filter(a => a.id !== adminId));
+        if (onRefresh) onRefresh();
         Swal.fire('Terhapus!', 'Data administrasi telah dihapus.', 'success');
       } catch (error) {
         Swal.fire('Gagal', 'Gagal menghapus data', 'error');
