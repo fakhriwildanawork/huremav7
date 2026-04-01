@@ -44,8 +44,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         <div className="p-8">
           <div className="flex flex-col items-center mb-8">
             <img src={LOGO_ICON} alt="Logo" className="w-16 h-16 object-contain mb-4" />
-            <h1 className="text-2xl font-black text-gray-800 tracking-tighter">HUREMA</h1>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">{Client_Name}</p>
+            <h1 className="text-2xl font-black text-[#006E62] tracking-tighter">HUREMA</h1>
+            <p className="text-[10px] font-bold text-black uppercase tracking-[0.2em] mt-1">{Client_Name}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -105,8 +105,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             </button>
           </form>
 
-          <div className="mt-10 pt-6 border-t border-gray-50 text-center">
-            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">HUREMA by Maindi</p>
+          <div className="mt-10 pt-6 border-t border-gray-100 text-center">
+            <p className="text-[10px] font-bold text-[#006E62] uppercase tracking-widest">HUREMA by Maindi</p>
           </div>
         </div>
       </div>
