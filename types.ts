@@ -75,6 +75,10 @@ export interface AuthUser {
   role: 'admin' | 'user';
   gender: 'Laki-laki' | 'Perempuan';
   schedule_type: string;
+  schedule_id: string | null;
+  schedule?: {
+    type: number;
+  };
   photo_google_id?: string | null;
   end_date?: string | null;
   // Admin Permissions

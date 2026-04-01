@@ -51,7 +51,7 @@ const LeaveForm: React.FC<LeaveFormProps> = ({ accountId, isAdmin = false, onClo
         <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-[#006E62]">Pengajuan Libur Mandiri</h3>
-            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Khusus Jadwal Fleksibel / Dinamis</p>
+            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Khusus Jadwal Fleksibel / Dinamis / Shift Kerja</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={18} />

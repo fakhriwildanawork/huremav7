@@ -127,7 +127,7 @@ const LeaveMain: React.FC = () => {
     return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  const canRequestLeave = user?.schedule_type === 'Fleksibel' || user?.schedule_type === 'Shift Dinamis' || isAdmin;
+  const canRequestLeave = user?.schedule_type === 'Fleksibel' || user?.schedule_type === 'Shift Dinamis' || user?.schedule_type === 'Shift' || isAdmin;
 
   return (
     <div className="space-y-6">
@@ -136,7 +136,7 @@ const LeaveMain: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Libur Mandiri</h2>
-          <p className="text-sm text-gray-500">Kelola pengajuan libur untuk jadwal fleksibel & dinamis</p>
+          <p className="text-sm text-gray-500">Kelola pengajuan libur untuk jadwal fleksibel, dinamis & shift kerja</p>
         </div>
         {canRequestLeave && (
           <button 

@@ -161,7 +161,7 @@ const MasterMain: React.FC = () => {
             <div className="space-y-1">
               <h4 className="text-sm font-bold text-gray-800">Kebijakan Persetujuan Libur</h4>
               <p className="text-xs text-gray-500 leading-relaxed">
-                Tentukan apakah pengajuan libur mandiri (untuk jadwal Fleksibel/Dinamis) harus diverifikasi admin atau langsung disetujui sistem.
+                Tentukan apakah pengajuan libur mandiri (untuk jadwal Fleksibel/Shift Dinamis/Shift Kerja) harus diverifikasi admin atau langsung disetujui sistem.
               </p>
             </div>
             

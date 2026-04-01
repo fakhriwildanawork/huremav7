@@ -152,10 +152,10 @@ export const reportService = {
     ] = await Promise.all([
       supabase.from('accounts').select('id, full_name, internal_nik'),
       supabase.from('attendances').select('*').gte('check_in', startDate).lte('check_in', endDate),
-      supabase.from('leave_requests').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
-      supabase.from('annual_leave_requests').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
-      supabase.from('permission_requests').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
-      supabase.from('maternity_leave_requests').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
+      supabase.from('account_leave_requests').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
+      supabase.from('account_annual_leaves').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
+      supabase.from('account_permission_requests').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
+      supabase.from('account_maternity_leaves').select('*').eq('status', 'approved').gte('start_date', startDate).lte('end_date', endDate),
       supabase.from('dispensation_requests').select('*').eq('status', 'APPROVED').gte('date', startDate).lte('date', endDate),
       supabase.from('holidays').select('*').gte('date', startDate).lte('date', endDate)
     ]);
@@ -221,10 +221,10 @@ export const reportService = {
     let accQuery = supabase.from('accounts').select('*, location:locations(name)');
     let attQuery = supabase.from('attendances').select('*');
     let otQuery = supabase.from('overtimes').select('*');
-    let lQuery = supabase.from('leave_requests').select('*').eq('status', 'approved');
-    let alQuery = supabase.from('annual_leave_requests').select('*').eq('status', 'approved');
-    let pQuery = supabase.from('permission_requests').select('*').eq('status', 'approved');
-    let mlQuery = supabase.from('maternity_leave_requests').select('*').eq('status', 'approved');
+    let lQuery = supabase.from('account_leave_requests').select('*').eq('status', 'approved');
+    let alQuery = supabase.from('account_annual_leaves').select('*').eq('status', 'approved');
+    let pQuery = supabase.from('account_permission_requests').select('*').eq('status', 'approved');
+    let mlQuery = supabase.from('account_maternity_leaves').select('*').eq('status', 'approved');
 
     if (startDate) {
       attQuery = attQuery.gte('check_in', startDate);
@@ -307,10 +307,10 @@ export const reportService = {
       { data: permissions }
     ] = await Promise.all([
       supabase.from('accounts').select('id, full_name, internal_nik, leave_quota'),
-      supabase.from('leave_requests').select('*').eq('status', 'approved'),
-      supabase.from('annual_leave_requests').select('*').eq('status', 'approved'),
-      supabase.from('maternity_leave_requests').select('*').eq('status', 'approved'),
-      supabase.from('permission_requests').select('*').eq('status', 'approved')
+      supabase.from('account_leave_requests').select('*').eq('status', 'approved'),
+      supabase.from('account_annual_leaves').select('*').eq('status', 'approved'),
+      supabase.from('account_maternity_leaves').select('*').eq('status', 'approved'),
+      supabase.from('account_permission_requests').select('*').eq('status', 'approved')
     ]);
 
     if (!accounts) return [];

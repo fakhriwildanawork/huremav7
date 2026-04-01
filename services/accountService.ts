@@ -737,10 +737,10 @@ export const accountService = {
           if (schedule_name) {
             const lowerName = schedule_name.toLowerCase();
             if (lowerName === 'fleksibel') {
-              rest.schedule_type = 'FLEKSIBEL';
+              rest.schedule_type = 'Fleksibel';
               rest.schedule_id = null;
             } else if (lowerName === 'shift dinamis') {
-              rest.schedule_type = 'DINAMIS';
+              rest.schedule_type = 'Shift Dinamis';
               rest.schedule_id = null;
             } else {
               const sch = scheduleMap.get(lowerName);
@@ -748,7 +748,7 @@ export const accountService = {
                 throw new Error(`Jadwal "${schedule_name}" tidak ditemukan.`);
               }
               rest.schedule_id = sch.id;
-              rest.schedule_type = sch.type === 1 ? 'Office Hour' : 'Shift';
+              rest.schedule_type = sch.name;
             }
           }
 
