@@ -1,12 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
-import { X, Edit2, Trash2, MapPin, Calendar, Clock, Image as ImageIcon, Phone, Target, Layers, Plus, FileText, ExternalLink, Paperclip } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Edit2, Trash2, MapPin, Calendar, Clock, Image as ImageIcon, Phone, Target, Layers, Plus, FileText, ExternalLink, Paperclip, Navigation } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Location, LocationAdministration } from '../../types';
 import { locationService } from '../../services/locationService';
 import { googleDriveService } from '../../services/googleDriveService';
 import LocationAdminForm from './LocationAdminForm';
 import LoadingSpinner from '../../components/Common/LoadingSpinner';
+
+declare var L: any;
 
 interface LocationDetailProps {
   id: string;
@@ -22,10 +24,38 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
   const [isSaving, setIsSaving] = useState(false);
   const [showAdminForm, setShowAdminForm] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<LocationAdministration | null>(null);
+  
+  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (location && !mapRef.current) {
+      // Fix for Leaflet default icon issue
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      });
+
+      mapRef.current = L.map('detail-map-container').setView([location.latitude, location.longitude], 16);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(mapRef.current);
+
+      L.marker([location.latitude, location.longitude]).addTo(mapRef.current);
+    }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [location]);
 
   const fetchData = async () => {
     try {
@@ -116,6 +146,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
     });
   };
 
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}`;
+
   return (
     <div className="bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row gap-8 p-6 md:p-8">
       {isSaving && <LoadingSpinner />}
@@ -142,6 +174,21 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
           </div>
 
           <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Lokasi Geotag</p>
+                <a 
+                  href={googleMapsUrl} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-1 text-[9px] font-bold text-[#006E62] hover:underline"
+                >
+                  <Navigation size={10} /> BUKA GOOGLE MAPS
+                </a>
+              </div>
+              <div id="detail-map-container" className="h-40 rounded-md border border-gray-100 shadow-sm"></div>
+            </div>
+
             <div className="space-y-1">
               <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Alamat Lengkap</p>
               <div className="flex items-start gap-2">
@@ -245,7 +292,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
                       {admin.file_ids?.map((fid, idx) => (
                         <a 
                           key={idx} 
-                          href={googleDriveService.getFileUrl(fid)} 
+                          href={googleDriveService.getViewerUrl(fid)} 
                           target="_blank" 
                           rel="noreferrer"
                           className="flex items-center gap-1 bg-gray-100 text-[9px] font-bold p-1 rounded hover:bg-gray-200 transition-colors"

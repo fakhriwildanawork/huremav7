@@ -133,7 +133,7 @@ const LocationMain: React.FC = () => {
         <LocationDetail
           id={selectedLocationId}
           onClose={() => setSelectedLocationId(null)}
-          onEdit={(loc) => { setSelectedLocationId(null); setEditingLocation(loc); setShowForm(true); }}
+          onEdit={(loc) => { setEditingLocation(loc); setShowForm(true); }}
           onDelete={(id) => handleDelete(id)}
         />
       </div>
