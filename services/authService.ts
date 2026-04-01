@@ -4,6 +4,7 @@ import { AuthUser } from '../types';
 import { settingsService } from './settingsService';
 
 const SESSION_KEY = 'hurema_user_session';
+let cachedUser: AuthUser | null = null;
 
 export const authService = {
   async login(accessCode: string, passwordRaw: string): Promise<AuthUser> {
@@ -44,14 +45,18 @@ export const authService = {
       is_finance_admin: finAdmins.includes(data.id)
     } as AuthUser;
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    cachedUser = user;
     return user;
   },
 
   getCurrentUser(): AuthUser | null {
+    if (cachedUser) return cachedUser;
+
     const session = localStorage.getItem(SESSION_KEY);
     if (!session) return null;
     try {
-      return JSON.parse(session);
+      cachedUser = JSON.parse(session);
+      return cachedUser;
     } catch {
       return null;
     }
@@ -59,6 +64,7 @@ export const authService = {
 
   logout() {
     localStorage.removeItem(SESSION_KEY);
+    cachedUser = null;
     window.location.reload();
   }
 };

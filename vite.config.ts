@@ -17,6 +17,27 @@ export default defineConfig(({ mode }) => {
         VitePWA({
           registerType: 'autoUpdate',
           includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+          workbox: {
+            globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+            // Disable pre-caching of all modules to reduce initial burst
+            // Only essential assets will be cached
+            runtimeCaching: [
+              {
+                urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+                handler: 'CacheFirst',
+                options: {
+                  cacheName: 'google-fonts-cache',
+                  expiration: {
+                    maxEntries: 10,
+                    maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                  },
+                  cacheableResponse: {
+                    statuses: [0, 200]
+                  }
+                }
+              }
+            ]
+          },
           manifest: {
             name: 'HUREMA v2 - Sistem Manajemen Sumber Daya Terpadu',
             short_name: 'HUREMA',
