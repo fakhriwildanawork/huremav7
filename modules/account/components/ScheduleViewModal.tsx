@@ -24,8 +24,8 @@ const ScheduleViewModal: React.FC<ScheduleViewModalProps> = ({ schedule, onClose
   const badge = getBadgeType(schedule.type);
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#006E62]/10 rounded-lg">
@@ -41,7 +41,7 @@ const ScheduleViewModal: React.FC<ScheduleViewModalProps> = ({ schedule, onClose
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <h2 className="text-xl font-bold text-gray-800 tracking-tight">{schedule.name}</h2>

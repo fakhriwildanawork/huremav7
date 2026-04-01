@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, Upload, User, MapPin, Briefcase, GraduationCap, ShieldCheck, Heart, AlertCircle, Paperclip, ChevronDown, CalendarClock, FileBadge } from 'lucide-react';
+import { X, Save, Upload, User, MapPin, Briefcase, GraduationCap, ShieldCheck, Heart, AlertCircle, Paperclip, ChevronDown, CalendarClock, FileBadge, FileCheck } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { AccountInput, Location, Schedule } from '../../types';
 import { googleDriveService } from '../../services/googleDriveService';
@@ -172,6 +172,12 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
     });
   };
 
+  const isImageFile = (fileId: string) => {
+    if (!fileId) return false;
+    const name = fileId.includes('|') ? fileId.split('|')[1] : '';
+    return !name || /\.(jpg|jpeg|png|webp|gif|svg|bmp)$/i.test(name);
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -337,7 +343,11 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                     <div className="flex items-center gap-4 p-2 bg-orange-50/50 rounded border border-orange-100">
                       <label className="w-10 h-10 rounded bg-white border border-dashed border-orange-300 flex items-center justify-center relative overflow-hidden cursor-pointer group shrink-0">
                         {formData.ktp_google_id ? (
-                          <img src={googleDriveService.getFileUrl(formData.ktp_google_id)} alt="KTP" className="w-full h-full object-cover" />
+                          isImageFile(formData.ktp_google_id) ? (
+                            <img src={googleDriveService.getFileUrl(formData.ktp_google_id)} alt="KTP" className="w-full h-full object-cover" />
+                          ) : (
+                            <FileCheck size={18} className="text-[#006E62]" />
+                          )
                         ) : (
                           <Upload size={14} className="text-orange-300" />
                         )}
@@ -513,8 +523,12 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                             <div className="flex items-center gap-2 mt-1">
                               <label htmlFor="file_sk_id" className="flex items-center gap-2 px-3 py-1.5 bg-white border border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-100 transition-colors flex-1 overflow-hidden">
                                 {formData.file_sk_id ? (
-                                  <div className="w-5 h-5 rounded overflow-hidden border border-gray-100 shrink-0">
-                                    <img src={googleDriveService.getFileUrl(formData.file_sk_id)} className="w-full h-full object-cover" />
+                                  <div className="w-5 h-5 rounded overflow-hidden border border-gray-100 shrink-0 flex items-center justify-center">
+                                    {isImageFile(formData.file_sk_id) ? (
+                                      <img src={googleDriveService.getFileUrl(formData.file_sk_id)} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <FileCheck size={14} className="text-[#006E62]" />
+                                    )}
                                   </div>
                                 ) : (
                                   <Upload size={12} className="text-gray-400 shrink-0" />
@@ -569,7 +583,11 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                                 <Label htmlFor="contract_file">Upload Kontrak</Label>
                                 <div className="flex items-center gap-2">
                                   <label htmlFor="contract_file" className="flex items-center gap-2 px-3 py-1.5 bg-white border border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50 flex-1 overflow-hidden transition-colors">
-                                    <Upload size={12} className="text-gray-400 shrink-0" />
+                                    {formData.contract_initial.file_id ? (
+                                      <FileCheck size={12} className="text-[#006E62] shrink-0" />
+                                    ) : (
+                                      <Upload size={12} className="text-gray-400 shrink-0" />
+                                    )}
                                     <span className="text-[10px] text-gray-500 truncate">{formData.contract_initial.file_id ? 'PDF Kontrak OK' : 'Pilih File PDF'}</span>
                                     <input id="contract_file" type="file" className="hidden" accept="application/pdf" onChange={(e) => handleFileUpload(e, 'contract_file')} />
                                   </label>
@@ -601,7 +619,11 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                        <label htmlFor="diploma_google_id" className="flex items-center gap-4 p-2 border border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50 group transition-colors">
                           <div className="w-10 h-10 rounded bg-white flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden">
                             {formData.diploma_google_id ? (
-                               <img src={googleDriveService.getFileUrl(formData.diploma_google_id)} className="w-full h-full object-cover" />
+                               isImageFile(formData.diploma_google_id) ? (
+                                 <img src={googleDriveService.getFileUrl(formData.diploma_google_id)} className="w-full h-full object-cover" />
+                               ) : (
+                                 <FileCheck size={18} className="text-[#006E62]" />
+                               )
                             ) : (
                               <Upload size={14} className="text-gray-300 group-hover:text-[#006E62]" />
                             )}

@@ -516,10 +516,33 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
            <div className="space-y-3">
               {!isReadOnly && (
                 <div className="flex items-center justify-between p-2 bg-gray-50 rounded text-[11px] font-bold">
-                  <span className="text-gray-500">KODE AKSES</span>
+                  <span className="text-gray-500 uppercase tracking-widest">Kode Akses</span>
                   <span className="text-[#006E62] tracking-widest">{account.access_code}</span>
                 </div>
               )}
+
+              <p className="text-[9px] font-bold text-gray-400 uppercase mt-2">Informasi Cuti</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center justify-between px-2 py-1.5 border border-gray-100 rounded bg-gray-50/50">
+                  <span className="text-[9px] font-medium text-gray-600">Cuti Tahunan</span>
+                  <span className="text-[10px] font-bold text-[#006E62]">{account.leave_quota} Hari</span>
+                </div>
+                {account.gender === 'Perempuan' && (
+                  <div className="flex items-center justify-between px-2 py-1.5 border border-gray-100 rounded bg-gray-50/50">
+                    <span className="text-[9px] font-medium text-gray-600">Cuti Melahirkan</span>
+                    <span className="text-[10px] font-bold text-[#006E62]">{account.maternity_leave_quota} Hari</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between px-2 py-1.5 border border-gray-100 rounded bg-gray-50/50">
+                  <span className="text-[9px] font-medium text-gray-600">Carry-over</span>
+                  <span className="text-[10px] font-bold text-[#006E62]">{account.carry_over_quota} / {account.max_carry_over_days} Hari</span>
+                </div>
+                <div className="flex items-center justify-between px-2 py-1.5 border border-gray-100 rounded bg-gray-50/50">
+                  <span className="text-[9px] font-medium text-gray-600">Akumulasi Cuti</span>
+                  <span className={`text-[8px] font-bold uppercase ${account.is_leave_accumulated ? 'text-[#006E62]' : 'text-gray-400'}`}>{account.is_leave_accumulated ? 'Aktif' : 'Non-aktif'}</span>
+                </div>
+              </div>
+
               <p className="text-[9px] font-bold text-gray-400 uppercase mt-2">Kebijakan Radius Presensi</p>
               <div className="grid grid-cols-2 gap-2">
                  {[
