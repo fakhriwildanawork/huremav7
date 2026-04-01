@@ -291,12 +291,24 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
   };
 
   const handleUpdate = async (id: string, input: Partial<AccountInput>) => {
+    const originalAccounts = [...accounts];
+    
+    // Optimistic update
+    setAccounts(prev => prev.map(acc => {
+      if (acc.id === id) {
+        return { ...acc, ...input } as Account;
+      }
+      return acc;
+    }).sort((a, b) => a.full_name.localeCompare(b.full_name)));
+    
+    setShowForm(false);
+    setEditingAccount(null);
     setIsSaving(true);
+
     try {
       const updated = await accountService.update(id, input);
       setAccounts(prev => prev.map(acc => acc.id === id ? updated : acc).sort((a, b) => a.full_name.localeCompare(b.full_name)));
-      setEditingAccount(null);
-      setShowForm(false);
+      
       Swal.fire({
         title: 'Terupdate!',
         text: 'Data akun berhasil diperbarui.',
@@ -305,6 +317,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
         showConfirmButton: false
       });
     } catch (error) {
+      setAccounts(originalAccounts);
       Swal.fire('Gagal', 'Gagal memperbarui data', 'error');
     } finally {
       setIsSaving(false);
@@ -324,14 +337,19 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
     });
 
     if (result.isConfirmed) {
+      const originalAccounts = [...accounts];
+      
+      // Optimistic delete
+      setAccounts(prev => prev.filter(acc => acc.id !== id));
+      setSelectedIds(prev => prev.filter(sid => sid !== id));
+      setSelectedAccountId(null);
       setIsSaving(true);
+
       try {
         await accountService.delete(id);
-        setAccounts(prev => prev.filter(acc => acc.id !== id));
-        setSelectedIds(prev => prev.filter(sid => sid !== id));
-        setSelectedAccountId(null);
         Swal.fire('Terhapus!', 'Akun telah dihapus.', 'success');
       } catch (error) {
+        setAccounts(originalAccounts);
         Swal.fire('Gagal', 'Gagal menghapus data', 'error');
       } finally {
         setIsSaving(false);
@@ -414,6 +432,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
         </button>
         <AccountDetail
           id={selectedAccountId}
+          data={accounts.find(a => a.id === selectedAccountId)}
           onClose={() => setSelectedAccountId(null)}
           onEdit={(acc) => { setEditingAccount(acc); setShowForm(true); }}
           onDelete={(id) => handleDelete(id)}

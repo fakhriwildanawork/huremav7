@@ -49,10 +49,11 @@ interface AccountDetailProps {
   onEdit: (account: Account) => void;
   onDelete: (id: string) => void;
   isReadOnly?: boolean;
+  data?: Account;
 }
 
-const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDelete, isReadOnly = false }) => {
-  const [account, setAccount] = useState<Account | null>(null);
+const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDelete, isReadOnly = false, data }) => {
+  const [account, setAccount] = useState<Account | null>(data || null);
   const [careerLogs, setCareerLogs] = useState<CareerLog[]>([]);
   const [healthLogs, setHealthLogs] = useState<HealthLog[]>([]);
   const [contracts, setContracts] = useState<AccountContract[]>([]);
@@ -82,6 +83,10 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (data) setAccount(data);
+  }, [data]);
 
   const fetchData = async () => {
     try {
