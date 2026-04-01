@@ -186,7 +186,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Lokasi Geotag</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Lokasi</p>
                 <a 
                   href={googleMapsUrl} 
                   target="_blank" 
@@ -250,7 +250,6 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
           
           <div className="pt-4 border-t border-gray-100 flex justify-between text-[9px] text-gray-400 uppercase font-bold">
              <span>Dibuat: {formatDate(location.created_at)}</span>
-             <span>ID: {location.id.slice(0, 8)}</span>
           </div>
         </div>
       </div>

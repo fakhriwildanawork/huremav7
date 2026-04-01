@@ -75,7 +75,7 @@ const LocationAdminForm: React.FC<LocationAdminFormProps> = ({ onClose, onSubmit
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-[#006E62]">{initialData ? 'Edit' : 'Tambah'} Data Administrasi</h3>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Legalitas & Status Aset</p>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Legalitas & Dokumen</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={20} />
