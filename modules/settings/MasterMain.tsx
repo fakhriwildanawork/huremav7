@@ -71,7 +71,7 @@ const MasterMain: React.FC = () => {
         </div>
         <div>
           <h2 className="text-xl font-bold text-gray-800 tracking-tight">Master Aplikasi</h2>
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Pusat Kontrol Parameter & Workflow Sistem</p>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Pusat Kontrol Kebijakan</p>
         </div>
       </div>
 
