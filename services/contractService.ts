@@ -173,14 +173,15 @@ export const contractService = {
 
     // Mapping Jenis Kontrak ke Jenis Karyawan
     let employeeType = 'Kontrak';
-    if (latestContract.contract_type === 'PKWTT') employeeType = 'Tetap';
-    else if (latestContract.contract_type === 'Magang') employeeType = 'Magang';
-    else if (latestContract.contract_type === 'Harian') employeeType = 'Harian';
-    else if (latestContract.contract_type === 'PKWT') employeeType = 'Kontrak';
+    const cType = latestContract.contract_type;
+    if (cType === 'PKWTT' || cType === 'PKWTT (Tetap)') employeeType = 'Tetap';
+    else if (cType === 'Magang') employeeType = 'Magang';
+    else if (cType === 'Harian') employeeType = 'Harian';
+    else if (cType === 'PKWT' || cType === 'PKWT (Kontrak)') employeeType = 'Kontrak';
     // Addendum biasanya mengikuti status kontrak sebelumnya, default ke Kontrak jika ragu
 
     // Jika kontrak terbaru adalah PKWTT atau tidak punya end_date, maka end_date di accounts adalah null
-    const newEndDate = (latestContract.contract_type === 'PKWTT' || !latestContract.end_date) 
+    const newEndDate = (cType === 'PKWTT' || cType === 'PKWTT (Tetap)' || !latestContract.end_date) 
       ? null 
       : latestContract.end_date;
 
@@ -269,7 +270,7 @@ export const contractService = {
       fgColor: { argb: 'FFFFF9C4' } // Light yellow
     };
 
-    const contractTypes = ['PKWT', 'PKWTT', 'Magang', 'Harian', 'Addendum'];
+    const contractTypes = ['PKWT (Kontrak)', 'PKWTT (Tetap)', 'Magang', 'Harian'];
     const totalRows = 3 + accounts.length;
     for (let i = 4; i <= totalRows; i++) {
       wsImport.getCell(`E${i}`).dataValidation = {
@@ -360,12 +361,16 @@ export const contractService = {
 
               const isValid = !errorMsg;
 
+              let contractType = String(row['Jenis Kontrak (*)'] || '').trim();
+              if (contractType === 'PKWT (Kontrak)') contractType = 'PKWT';
+              else if (contractType === 'PKWTT (Tetap)') contractType = 'PKWTT';
+
               return {
                 account_id: row['Account ID (Hidden)'],
                 full_name: row['Nama Karyawan'],
                 internal_nik: row['NIK Internal'],
                 contract_number: contractNumber,
-                contract_type: row['Jenis Kontrak (*)'],
+                contract_type: contractType,
                 start_date: formatExcelDate(row['Tgl Mulai (YYYY-MM-DD) (*)']),
                 end_date: formatExcelDate(row['Tgl Akhir (YYYY-MM-DD) (*)']),
                 notes: row['Keterangan'] || null,

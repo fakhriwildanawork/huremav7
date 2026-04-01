@@ -847,7 +847,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         {/* k. Status Exit / Pemberhentian */}
         <DetailSection 
           icon={LogOut} 
-          title="Status Exit / Pemberhentian" 
+          title="Status Exit" 
           onAdd={!termination && !isInactive ? () => setShowTerminationForm(true) : undefined}
           isScrollable
         >
@@ -977,7 +977,21 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
       )}
 
       {showContractForm.show && (
-        <ContractFormModal onClose={() => setShowContractForm({ show: false })} onSuccess={() => { setShowContractForm({ show: false }); fetchData(); }} initialData={showContractForm.data} />
+        <ContractFormModal 
+          onClose={() => setShowContractForm({ show: false })} 
+          onSuccess={(newData) => { 
+            setShowContractForm({ show: false }); 
+            if (showContractForm.data?.id) {
+              // Update existing
+              setContracts(prev => prev.map(c => c.id === newData.id ? newData : c));
+            } else {
+              // Add new
+              setContracts(prev => [newData, ...prev]);
+            }
+            fetchData(); // Still fetch to ensure sync and update main profile
+          }} 
+          initialData={showContractForm.data} 
+        />
       )}
 
       {showWarningForm && (

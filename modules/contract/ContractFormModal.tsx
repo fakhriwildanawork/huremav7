@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Save, Upload, FileBadge, Calendar, Loader2 } from 'lucide-react';
+import { X, Save, Upload, FileBadge, Calendar, Loader2, FileCheck } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { contractService } from '../../services/contractService';
 import { googleDriveService } from '../../services/googleDriveService';
@@ -8,7 +8,7 @@ import { AccountContractInput } from '../../types';
 
 interface ContractFormModalProps {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (data: any) => void;
   initialData?: any;
 }
 
@@ -28,7 +28,13 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ onClose, onSucces
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const updated = { ...prev, [name]: value };
+      if (name === 'contract_type' && value === 'PKWTT') {
+        updated.end_date = '';
+      }
+      return updated;
+    });
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,15 +54,31 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ onClose, onSucces
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!formData.contract_type) {
+      Swal.fire('Peringatan', 'Jenis Kontrak wajib diisi.', 'warning');
+      return;
+    }
+    if (!formData.start_date) {
+      Swal.fire('Peringatan', 'Tgl Mulai Kontrak wajib diisi.', 'warning');
+      return;
+    }
+    if (formData.contract_type !== 'PKWTT' && !formData.end_date) {
+      Swal.fire('Peringatan', 'Tgl Akhir Kontrak wajib diisi untuk jenis kontrak selain PKWTT.', 'warning');
+      return;
+    }
+
     try {
       setIsSaving(true);
+      let result;
       if (initialData?.id) {
-        await contractService.update(initialData.id, formData);
+        result = await contractService.update(initialData.id, formData);
       } else {
-        await contractService.create(formData);
+        result = await contractService.create(formData);
       }
       Swal.fire({ title: 'Berhasil!', text: 'Kontrak telah disimpan.', icon: 'success', timer: 1500, showConfirmButton: false });
-      onSuccess();
+      onSuccess(result);
     } catch (error) {
       Swal.fire('Gagal', 'Gagal menyimpan data.', 'error');
     } finally {
@@ -86,11 +108,10 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ onClose, onSucces
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Jenis Kontrak</label>
             <select name="contract_type" value={formData.contract_type} onChange={handleChange} className="w-full px-3 py-2 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#006E62] outline-none">
-              <option value="PKWT">PKWT</option>
+              <option value="PKWT">PKWT (Kontrak)</option>
               <option value="PKWTT">PKWTT (Tetap)</option>
               <option value="Magang">Magang</option>
               <option value="Harian">Harian</option>
-              <option value="Addendum">Addendum</option>
             </select>
           </div>
 
@@ -101,17 +122,28 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ onClose, onSucces
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Berakhir</label>
-              <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} className="w-full px-3 py-2 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#006E62] outline-none" />
+              <input 
+                type="date" 
+                name="end_date" 
+                value={formData.end_date} 
+                onChange={handleChange} 
+                disabled={formData.contract_type === 'PKWTT'}
+                className={`w-full px-3 py-2 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#006E62] outline-none ${formData.contract_type === 'PKWTT' ? 'bg-gray-100 cursor-not-allowed opacity-60' : ''}`} 
+              />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Unggah PDF (G-Drive)</label>
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Unggah Kontrak</label>
             <div className={`p-3 bg-gray-50 border border-dashed rounded-md ${formData.file_id ? 'border-[#006E62] bg-emerald-50/20' : 'border-gray-200'}`}>
               <label className="flex items-center gap-3 cursor-pointer">
-                <Upload size={16} className={formData.file_id ? 'text-[#006E62]' : 'text-gray-300'} />
+                {formData.file_id ? (
+                  <FileCheck size={16} className="text-[#006E62]" />
+                ) : (
+                  <Upload size={16} className="text-gray-300" />
+                )}
                 <div className="flex-1">
-                  <p className="text-[10px] font-bold text-gray-600 uppercase">{uploading ? 'Mengunggah...' : formData.file_id ? 'PDF TERSIMPAN' : 'PILIH PDF'}</p>
+                  <p className="text-[10px] font-bold text-gray-600 uppercase">{uploading ? 'Mengunggah...' : formData.file_id ? 'FILE TERSIMPAN' : 'PILIH FILE'}</p>
                 </div>
                 <input type="file" className="hidden" accept="application/pdf" onChange={handleFileUpload} disabled={uploading} />
               </label>

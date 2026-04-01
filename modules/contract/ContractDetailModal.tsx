@@ -69,7 +69,7 @@ const ContractDetailModal: React.FC<ContractDetailModalProps> = ({ contract, onC
             </div>
 
             <div className="bg-white p-4 rounded border border-gray-100 shadow-sm flex flex-col">
-              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Keterangan / Catatan</p>
+              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Keterangan</p>
               <p className="text-xs text-gray-600 leading-relaxed italic flex-1">
                 {contract.notes || 'Tidak ada catatan tambahan.'}
               </p>
@@ -80,7 +80,7 @@ const ContractDetailModal: React.FC<ContractDetailModalProps> = ({ contract, onC
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Paperclip size={16} className="text-[#006E62]" />
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lampiran Dokumen</h4>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lampiran Kontrak</h4>
               </div>
               {viewerUrl && (
                 <a 
@@ -106,7 +106,7 @@ const ContractDetailModal: React.FC<ContractDetailModalProps> = ({ contract, onC
                 ) : (
                   <div className="flex flex-col items-center gap-3 text-gray-400">
                     <FileText size={48} strokeWidth={1} />
-                    <p className="text-[10px] font-bold uppercase tracking-widest">Dokumen PDF / Non-Gambar</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">Tidak ada preview Dokumen</p>
                     <a 
                       href={viewerUrl!} 
                       target="_blank" 
