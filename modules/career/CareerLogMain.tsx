@@ -206,7 +206,7 @@ const CareerLogMain: React.FC = () => {
           )}
           <button 
             onClick={() => setShowImportModal(true)}
-            className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm text-sm font-medium"
+            className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm text-sm font-bold"
           >
             <FileUp size={18} /> IMPOR MASSAL
           </button>

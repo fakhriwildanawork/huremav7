@@ -179,7 +179,7 @@ const ContractMain: React.FC = () => {
           <div className="relative group">
             <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium">
               <Filter size={18} />
-              <span>Filter: {filterType === 'all' ? 'Semua' : filterType === 'active' ? 'Aktif' : filterType === 'ending_soon' ? 'Akan Habis' : 'Kadaluarsa'}</span>
+              <span>{filterType === 'all' ? 'Semua' : filterType === 'active' ? 'Aktif' : filterType === 'ending_soon' ? 'Akan Habis' : 'Kadaluarsa'}</span>
               <ChevronDown size={16} />
             </button>
             <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
@@ -194,7 +194,7 @@ const ContractMain: React.FC = () => {
 
           <button 
             onClick={() => setShowImportModal(true)}
-            className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm text-sm font-medium"
+            className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm text-sm font-bold"
           >
             <FileUp size={18} /> IMPOR MASSAL
           </button>

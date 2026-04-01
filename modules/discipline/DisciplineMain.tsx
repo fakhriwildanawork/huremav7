@@ -188,13 +188,13 @@ const DisciplineMain: React.FC = () => {
             onClick={() => handleTabChange('warnings')}
             className={`px-4 py-2 text-xs font-bold uppercase transition-all rounded ${activeTab === 'warnings' ? 'bg-white text-[#006E62] shadow-sm' : 'text-gray-400'}`}
           >
-            Peringatan (SP)
+            Peringatan
           </button>
           <button 
             onClick={() => handleTabChange('terminations')}
             className={`px-4 py-2 text-xs font-bold uppercase transition-all rounded ${activeTab === 'terminations' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400'}`}
           >
-            Karyawan Keluar (Exit)
+            Keluar (Exit)
           </button>
         </div>
 
