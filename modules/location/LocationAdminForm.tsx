@@ -70,7 +70,7 @@ const LocationAdminForm: React.FC<LocationAdminFormProps> = ({ onClose, onSubmit
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-40 p-4">
+    <div className="fixed inset-0 z-[1002] flex items-center justify-center bg-black bg-opacity-40 p-4">
       <div className="bg-white rounded-md shadow-2xl w-full max-w-lg overflow-hidden flex flex-col animate-in zoom-in duration-200">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>

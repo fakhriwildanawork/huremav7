@@ -191,7 +191,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
                   <Navigation size={10} /> BUKA GOOGLE MAPS
                 </a>
               </div>
-              <div id="detail-map-container" className="h-40 rounded-md border border-gray-100 shadow-sm"></div>
+              <div id="detail-map-container" className="h-40 rounded-md border border-gray-100 shadow-sm relative z-0"></div>
             </div>
 
             <div className="space-y-1">

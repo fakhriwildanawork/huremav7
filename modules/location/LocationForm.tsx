@@ -154,7 +154,7 @@ const LocationForm: React.FC<LocationFormProps> = ({ onClose, onSubmit, initialD
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+    <div className="fixed inset-0 z-[1001] flex items-center justify-center bg-black bg-opacity-40 p-4">
       <div className="bg-white rounded-md shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="px-6 py-3 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0">
           <h3 className="text-base font-bold text-[#006E62]">
@@ -211,7 +211,7 @@ const LocationForm: React.FC<LocationFormProps> = ({ onClose, onSubmit, initialD
                 <Navigation size={10} /> DETEKSI POSISI
               </button>
             </div>
-            <div id="map-container" className="mb-1 border border-gray-200 rounded shadow-sm"></div>
+            <div id="map-container" className="mb-1 border border-gray-200 rounded shadow-sm relative z-0"></div>
             <div className="flex gap-4">
               <div className="text-[9px] text-gray-400 font-mono">LAT: {formData.latitude.toFixed(6)}</div>
               <div className="text-[9px] text-gray-400 font-mono">LNG: {formData.longitude.toFixed(6)}</div>

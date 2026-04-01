@@ -280,24 +280,30 @@ const LocationMain: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredLocations.map(location => (
-                <tr 
-                  key={location.id} 
-                  onClick={() => setSelectedLocationId(location.id)}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div className="font-bold text-[#006E62] text-xs">{location.name}</div>
-                    <div className="text-[9px] text-gray-400 uppercase font-bold">{location.location_type}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-[11px] text-gray-600 truncate max-w-xs">{location.address}</div>
-                    <div className="text-[10px] text-gray-400 font-bold uppercase">{location.city}</div>
-                  </td>
-                  <td className="px-6 py-4 text-xs text-gray-500">{location.phone || '-'}</td>
-                  <td className="px-6 py-4 text-xs text-right font-bold text-gray-400">{location.radius}m</td>
-                </tr>
-              ))}
+              {filteredLocations.map(location => {
+                const isExpired = checkIsExpired(location.id);
+                return (
+                  <tr 
+                    key={location.id} 
+                    onClick={() => setSelectedLocationId(location.id)}
+                    className={`cursor-pointer transition-colors ${isExpired ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-50'}`}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className={`font-bold text-xs ${isExpired ? 'text-red-700' : 'text-[#006E62]'}`}>{location.name}</div>
+                        {isExpired && <AlertCircle size={12} className="text-red-500 animate-pulse" />}
+                      </div>
+                      <div className={`text-[9px] uppercase font-bold ${isExpired ? 'text-red-400' : 'text-gray-400'}`}>{location.location_type}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className={`text-[11px] truncate max-w-xs ${isExpired ? 'text-red-600/70' : 'text-gray-600'}`}>{location.address}</div>
+                      <div className={`text-[10px] font-bold uppercase ${isExpired ? 'text-red-400' : 'text-gray-400'}`}>{location.city}</div>
+                    </td>
+                    <td className={`px-6 py-4 text-xs ${isExpired ? 'text-red-500' : 'text-gray-500'}`}>{location.phone || '-'}</td>
+                    <td className={`px-6 py-4 text-xs text-right font-bold ${isExpired ? 'text-red-400' : 'text-gray-400'}`}>{location.radius}m</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
