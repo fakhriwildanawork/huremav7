@@ -67,7 +67,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   type="text"
                   value={accessCode}
                   onChange={(e) => setAccessCode(e.target.value)}
-                  placeholder=""
+                  placeholder="Kode"
                   className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006E62]/20 focus:border-[#006E62] transition-all text-sm font-bold text-gray-700"
                 />
               </div>
@@ -99,7 +99,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 <Loader2 className="animate-spin" size={18} />
               ) : (
                 <>
-                  <ShieldCheck size={18} />
                   MASUK SEKARANG
                 </>
               )}
@@ -107,7 +106,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           </form>
 
           <div className="mt-10 pt-6 border-t border-gray-50 text-center">
-            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">v1.0.0 • Protected by HUREMA AI Security</p>
+            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">HUREMA by Maindi</p>
           </div>
         </div>
       </div>
