@@ -8,6 +8,7 @@ import { authService } from '../../services/authService';
 import { financeService } from '../../services/financeService';
 import { dispensationService } from '../../services/dispensationService';
 import { submissionService } from '../../services/submissionService';
+import { supabase } from '../../lib/supabase';
 import { LOGO_ICON, Client_Name } from '../../assets';
 import Swal from 'sweetalert2';
 
@@ -82,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isCollapsed,
   const isAdmin = user?.role === 'admin' || user?.is_hr_admin || user?.is_performance_admin || user?.is_finance_admin;
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && user?.id) {
       const fetchUnread = async () => {
         try {
           const [reimburseCount, compensationCount, dispensationCount, submissionCounts] = await Promise.all([
@@ -99,12 +100,27 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isCollapsed,
           console.error('Error fetching unread counts:', error);
         }
       };
+
       fetchUnread();
-      // Refresh every 1 minute
-      const interval = setInterval(fetchUnread, 60000);
-      return () => clearInterval(interval);
+
+      // Subscribe to Realtime changes for silent updates
+      const channel = supabase
+        .channel('sidebar-notifications')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'finance_reimbursements' }, fetchUnread)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'account_compensation_logs' }, fetchUnread)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'dispensation_requests' }, fetchUnread)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'account_submissions' }, fetchUnread)
+        .subscribe();
+
+      // Refresh every 5 minutes as fallback
+      const interval = setInterval(fetchUnread, 300000);
+      
+      return () => {
+        supabase.removeChannel(channel);
+        clearInterval(interval);
+      };
     }
-  }, [user]);
+  }, [user?.id, isAdmin]);
 
   const handleLogout = async () => {
     const result = await Swal.fire({
