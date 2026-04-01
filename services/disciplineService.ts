@@ -52,7 +52,7 @@ export const disciplineService = {
       .eq('account_id', accountId)
       .order('issue_date', { ascending: false });
     if (error) throw error;
-    return data as WarningLog[];
+    return (data || []) as WarningLog[];
   },
 
   async createWarning(input: WarningLogInput) {

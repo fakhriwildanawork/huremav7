@@ -97,11 +97,11 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         financeService.getAssignmentByAccountId(id)
       ]);
       setAccount(acc as any);
-      setCareerLogs(careers);
-      setHealthLogs(healths);
-      setContracts(contractList);
-      setCerts(certList);
-      setWarnings(warningList);
+      setCareerLogs(careers || []);
+      setHealthLogs(healths || []);
+      setContracts(contractList || []);
+      setCerts(certList || []);
+      setWarnings(warningList || []);
       setTermination(term || null);
       if (assignment && assignment.scheme) {
         setSalaryScheme(assignment.scheme);
@@ -684,17 +684,15 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         </DetailSection>
 
         {/* h. Daftar Sertifikasi */}
-        <DetailSection 
-          icon={Award} 
-          title="Daftar Sertifikasi" 
-          onAdd={() => setShowCertForm({ show: true, data: { account_id: id } })}
-          isScrollable
-        >
-          <div className="space-y-3">
-            {certs.length === 0 ? (
-              <p className="text-[10px] text-gray-400 italic">Belum ada data sertifikasi.</p>
-            ) : (
-              certs.map((cert) => (
+        {certs.length > 0 && (
+          <DetailSection 
+            icon={Award} 
+            title="Daftar Sertifikasi" 
+            onAdd={() => setShowCertForm({ show: true, data: { account_id: id } })}
+            isScrollable
+          >
+            <div className="space-y-3">
+              {certs.map((cert) => (
                 <div 
                   key={cert.id} 
                   className="flex group justify-between items-start border-l-2 border-emerald-100 pl-3 py-1 relative cursor-pointer hover:bg-gray-50/50 transition-colors"
@@ -726,10 +724,10 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
                     )}
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        </DetailSection>
+              ))}
+            </div>
+          </DetailSection>
+        )}
 
         {/* i. Riwayat Kesehatan */}
         <DetailSection 

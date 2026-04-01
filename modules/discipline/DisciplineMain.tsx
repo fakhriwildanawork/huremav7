@@ -166,6 +166,7 @@ const DisciplineMain: React.FC = () => {
   };
 
   const handleTabChange = (tab: 'warnings' | 'terminations') => {
+    setSearchTerm('');
     setActiveTab(tab);
     setSelectedIds([]);
     setCurrentPage(1);

@@ -69,7 +69,7 @@ export const contractService = {
       .order('start_date', { ascending: false });
     
     if (error) throw error;
-    return data as AccountContract[];
+    return (data || []) as AccountContract[];
   },
 
   async getLatestContract(accountId: string) {

@@ -61,7 +61,7 @@ export const certificationService = {
       .order('cert_date', { ascending: false });
     
     if (error) throw error;
-    return data as AccountCertification[];
+    return (data || []) as AccountCertification[];
   },
 
   async getUniqueCertTypes() {

@@ -153,35 +153,6 @@ const CertificationMain: React.FC = () => {
     <div className="space-y-6">
       {uploadingId && <LoadingSpinner message="Mengunggah Dokumen..." />}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div 
-          onClick={() => {
-            setFilterType('all');
-            setCurrentPage(1);
-          }}
-          className={`bg-white border p-4 rounded-md shadow-sm flex items-center gap-4 cursor-pointer transition-all ${filterType === 'all' ? 'border-[#006E62] ring-1 ring-[#006E62]' : 'border-gray-100 hover:border-gray-300'}`}
-        >
-          <div className="p-3 bg-emerald-50 rounded-md text-[#006E62]"><Award size={24} /></div>
-          <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Sertifikasi Terdata</p>
-            <p className="text-xl font-bold text-gray-800">{filterType === 'all' ? totalCount : '-'}</p>
-          </div>
-        </div>
-        <div 
-          onClick={() => {
-            setFilterType('this_month');
-            setCurrentPage(1);
-          }}
-          className={`bg-white border p-4 rounded-md shadow-sm flex items-center gap-4 cursor-pointer transition-all ${filterType === 'this_month' ? 'border-blue-600 ring-1 ring-blue-600' : 'border-gray-100 hover:border-gray-300'}`}
-        >
-          <div className="p-3 bg-blue-50 rounded-md text-blue-600"><Calendar size={24} /></div>
-          <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Input Bulan Ini</p>
-            <p className="text-xl font-bold text-gray-800">{filterType === 'this_month' ? totalCount : '-'}</p>
-          </div>
-        </div>
-      </div>
-
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <form onSubmit={handleSearch} className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
