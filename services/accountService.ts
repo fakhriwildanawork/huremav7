@@ -203,7 +203,7 @@ export const accountService = {
     */
 
     // 4. Otomatis buat kontrak awal jika disediakan
-    if (contract_initial && contract_initial.contract_number) {
+    if (contract_initial && (contract_initial.contract_number || contract_initial.contract_type || contract_initial.start_date)) {
       await supabase.from('account_contracts').insert([{
         account_id: newAccount.id,
         contract_number: contract_initial.contract_number,

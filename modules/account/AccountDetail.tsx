@@ -441,18 +441,22 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
                ) : '-'}
              </div>
              <div className="flex items-center gap-1.5 text-xs text-gray-600">
-               <Phone size={14} className="text-gray-400" /> 
                {account.phone ? (
                  <a 
                    href={getWhatsAppLink(account.phone)} 
                    target="_blank" 
                    rel="noopener noreferrer" 
-                   className="flex items-center gap-1 hover:text-[#006E62] transition-colors"
+                   className="flex items-center gap-1.5 hover:text-[#006E62] transition-colors"
                  >
                    <WhatsAppIcon />
                    {account.phone}
                  </a>
-               ) : '-'}
+               ) : (
+                 <>
+                   <Phone size={14} className="text-gray-400" />
+                   -
+                 </>
+               )}
              </div>
           </div>
         </div>

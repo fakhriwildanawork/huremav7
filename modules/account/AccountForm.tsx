@@ -259,9 +259,25 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
               return;
             }
 
-            if (payload.is_leave_accumulated && payload.carry_over_quota > payload.max_carry_over_days) {
+            if (payload.is_leave_accumulated && Number(payload.carry_over_quota) > Number(payload.max_carry_over_days)) {
               Swal.fire('Peringatan', 'Jatah carry-over saat ini tidak boleh melebihi batas maksimal.', 'warning');
               return;
+            }
+
+            // Contract validation for new accounts
+            if (!initialData) {
+              if (!payload.contract_initial.contract_type) {
+                Swal.fire('Peringatan', 'Jenis Kontrak wajib diisi.', 'warning');
+                return;
+              }
+              if (!payload.contract_initial.start_date) {
+                Swal.fire('Peringatan', 'Tgl Mulai Kontrak wajib diisi.', 'warning');
+                return;
+              }
+              if (payload.contract_initial.contract_type !== 'PKWTT' && !payload.contract_initial.end_date) {
+                Swal.fire('Peringatan', 'Tgl Akhir Kontrak wajib diisi untuk jenis kontrak selain PKWTT.', 'warning');
+                return;
+              }
             }
 
             if (payload.employee_type === 'Tetap') {
@@ -513,7 +529,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
 
                         {!initialData && (
                           <>
-                            <SectionHeader icon={FileBadge} title="Dokumen Kontrak Awal" />
+                            <SectionHeader icon={FileBadge} title="Kontrak" />
                             <div className="space-y-3 p-3 bg-emerald-50/50 border border-emerald-100 rounded">
                               <div className="space-y-1">
                                 <Label htmlFor="contract_number">Nomor Kontrak</Label>
@@ -521,7 +537,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                               </div>
                               <div className="grid grid-cols-1 gap-2">
                                 <div className="space-y-1">
-                                  <Label htmlFor="contract_type">Jenis Kontrak</Label>
+                                  <Label htmlFor="contract_type" required>Jenis Kontrak</Label>
                                   <select id="contract_type" name="contract_type" value={formData.contract_initial.contract_type} onChange={handleContractChange} className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#006E62] outline-none bg-white">
                                     <option value="">-- Pilih Jenis --</option>
                                     <option value="PKWT">PKWT (Kontrak)</option>
@@ -533,11 +549,11 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                               </div>
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="space-y-1">
-                                  <Label htmlFor="start_date">Tgl Mulai Kontrak</Label>
+                                  <Label htmlFor="start_date" required>Tgl Mulai Kontrak</Label>
                                   <input id="start_date" type="date" name="start_date" value={formData.contract_initial.start_date} onChange={handleContractChange} className="w-full px-2 py-1.5 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#006E62] outline-none bg-white" />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label htmlFor="end_date">Tgl Akhir Kontrak</Label>
+                                  <Label htmlFor="end_date" required={formData.contract_initial.contract_type !== 'PKWTT'}>Tgl Akhir Kontrak</Label>
                                   <input 
                                     id="end_date" 
                                     type="date" 
