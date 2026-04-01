@@ -22,6 +22,20 @@ const CareerImportModal: React.FC<CareerImportModalProps> = ({ onClose, onSucces
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    // Mitigation: Check for duplicate filenames in the current batch
+    const fileNames = (Array.from(files) as File[]).map(f => f.name.split('.').slice(0, -1).join('.'));
+    const duplicates = fileNames.filter((name, index) => fileNames.indexOf(name) !== index);
+    
+    if (duplicates.length > 0) {
+      Swal.fire({
+        title: 'File Duplikat',
+        text: `Ditemukan nama file yang sama dalam batch ini: [${duplicates.join(', ')}]. Harap pastikan setiap file memiliki nama yang unik agar sistem tidak bingung saat mapping.`,
+        icon: 'error'
+      });
+      if (e.target) e.target.value = '';
+      return;
+    }
+
     try {
       setIsUploadingAttachments(true);
       const newFiles: { name: string; id: string }[] = [];
@@ -157,7 +171,7 @@ const CareerImportModal: React.FC<CareerImportModalProps> = ({ onClose, onSucces
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-[#006E62]">Impor Massal Log Karir</h3>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Tahap {step}: {step === 1 ? 'Unggah File & Pratinjau' : 'Unggah Lampiran SK'}</p>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Tahap {step}: {step === 1 ? 'Unggah Data Karir' : 'Unggah Lampiran SK'}</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={20} />
@@ -172,7 +186,7 @@ const CareerImportModal: React.FC<CareerImportModalProps> = ({ onClose, onSucces
                   <FileUp size={32} />
                 </div>
                 <div className="text-center max-w-md">
-                  <h4 className="text-lg font-bold text-gray-800">1. Unggah Excel Karir</h4>
+                  <h4 className="text-lg font-bold text-gray-800">Unggah Data Karir</h4>
                 </div>
 
                 <div className="flex items-center gap-3 mt-6 w-full max-w-md">
@@ -185,7 +199,7 @@ const CareerImportModal: React.FC<CareerImportModalProps> = ({ onClose, onSucces
                   
                   <label className="flex-1 flex items-center justify-center gap-2 bg-[#006E62] text-white px-4 py-3 rounded-md hover:bg-[#005a50] transition-colors shadow-md text-sm font-bold uppercase tracking-tighter cursor-pointer">
                     {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <FileUp size={18} />}
-                    {isProcessing ? 'Memproses...' : previewData.length > 0 ? 'Ganti Excel' : 'Unggah Excel'}
+                    {isProcessing ? 'Memproses...' : previewData.length > 0 ? 'Ganti File' : 'Unggah File'}
                     <input 
                       type="file" 
                       className="hidden" 
@@ -228,7 +242,10 @@ const CareerImportModal: React.FC<CareerImportModalProps> = ({ onClose, onSucces
                               {row.isValid ? (
                                 <CheckCircle size={14} className="text-emerald-500" />
                               ) : (
-                                <AlertTriangle size={14} className="text-red-500" />
+                                <div className="flex items-center gap-1 text-red-600 font-bold">
+                                  <AlertTriangle size={14} />
+                                  <span>{row.errorMsg}</span>
+                                </div>
                               )}
                             </td>
                             <td className="px-4 py-2 font-bold">{row.full_name}</td>
@@ -259,14 +276,14 @@ const CareerImportModal: React.FC<CareerImportModalProps> = ({ onClose, onSucces
                   <Paperclip size={32} />
                 </div>
                 <div className="text-center max-w-md">
-                  <h4 className="text-lg font-bold text-gray-800">2. Unggah Lampiran SK (Opsional)</h4>
-                  <p className="text-xs text-gray-500 mt-2">Unggah file PDF/Gambar SK. Sistem akan mencocokkan nama file dengan Nomor SK di Excel secara otomatis.</p>
+                  <h4 className="text-lg font-bold text-gray-800">Unggah Lampiran SK (Opsional)</h4>
+                  <p className="text-xs text-gray-500 mt-2">Unggah file SK. Sistem akan mencocokkan nama file dengan Nomor SK secara otomatis.</p>
                 </div>
 
                 <div className="mt-6 w-full max-w-md">
                   <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 px-4 py-6 rounded-md hover:bg-gray-50 hover:border-[#006E62] transition-all text-sm font-bold text-gray-400 uppercase tracking-tighter cursor-pointer">
                     {isUploadingAttachments ? <Loader2 size={24} className="animate-spin text-[#006E62]" /> : <Upload size={24} />}
-                    {isUploadingAttachments ? 'Sedang Mengunggah...' : 'Klik atau Seret File SK ke Sini'}
+                    {isUploadingAttachments ? 'Sedang Mengunggah...' : 'Klik di Sini'}
                     <input type="file" className="hidden" accept="image/*,application/pdf" multiple onChange={handleBulkFileUpload} disabled={isUploadingAttachments} />
                   </label>
                 </div>

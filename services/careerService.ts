@@ -23,9 +23,9 @@ export const careerService = {
     if (searchQuery) {
       const accountIds = await accountService.searchIds(searchQuery);
       if (accountIds.length > 0) {
-        query = query.or(`position.ilike.%${searchQuery}%,grade.ilike.%${searchQuery}%,account_id.in.(${accountIds.join(',')})`);
+        query = query.or(`position.ilike.%${searchQuery}%,grade.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,account_id.in.(${accountIds.join(',')})`);
       } else {
-        query = query.or(`position.ilike.%${searchQuery}%,grade.ilike.%${searchQuery}%`);
+        query = query.or(`position.ilike.%${searchQuery}%,grade.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%`);
       }
     }
 

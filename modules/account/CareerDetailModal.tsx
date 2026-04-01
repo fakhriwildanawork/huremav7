@@ -36,7 +36,7 @@ const CareerDetailModal: React.FC<CareerDetailModalProps> = ({ log, onClose, onE
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
           <div>
             <h3 className="text-base font-bold text-[#006E62]">Detail Riwayat Karir</h3>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Informasi Perubahan Jabatan & Lokasi</p>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Informasi Perubahan Karir</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors p-1">
             <X size={20} />
@@ -88,7 +88,7 @@ const CareerDetailModal: React.FC<CareerDetailModalProps> = ({ log, onClose, onE
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Paperclip size={16} className="text-[#006E62]" />
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lampiran SK / Dokumen</h4>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lampiran SK</h4>
               </div>
               {viewerUrl && (
                 <a 
@@ -114,7 +114,7 @@ const CareerDetailModal: React.FC<CareerDetailModalProps> = ({ log, onClose, onE
                 ) : (
                   <div className="flex flex-col items-center gap-3 text-gray-400">
                     <FileText size={48} strokeWidth={1} />
-                    <p className="text-[10px] font-bold uppercase tracking-widest">Dokumen PDF / Non-Gambar</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">Tidak ada preview Dokumen</p>
                     <a 
                       href={viewerUrl!} 
                       target="_blank" 

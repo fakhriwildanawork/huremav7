@@ -172,28 +172,34 @@ const CareerLogMain: React.FC = () => {
       {uploadingId && <LoadingSpinner message="Mengunggah SK..." />}
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <form onSubmit={handleSearch} className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input
-            type="text"
-            placeholder="Cari log (Nama, NIK, Jabatan, Lokasi)..."
-            className="w-full pl-10 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#006E62] text-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                setCurrentPage(1);
-                fetchLogs();
-              }
+        <div className="relative flex-1 max-w-md flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Cari log (Nama, NIK, Jabatan, Lokasi)..."
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#006E62] text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setCurrentPage(1);
+                  fetchLogs();
+                }
+              }}
+            />
+          </div>
+          <button
+            onClick={() => {
+              setCurrentPage(1);
+              fetchLogs();
             }}
-          />
-          <button 
-            type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-[#006E62] transition-colors"
+            className="bg-[#006E62] text-white p-2 rounded-md hover:bg-[#005a50] transition-colors"
+            title="Cari"
           >
-            <Search size={16} />
+            <Search size={18} />
           </button>
-        </form>
+        </div>
         
         <div className="flex items-center gap-2">
           {selectedIds.length > 0 && (
@@ -276,7 +282,7 @@ const CareerLogMain: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-xs font-bold text-[#006E62]">{log.position}</div>
-                      <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Departemen: {log.grade || '-'}</div>
+                      <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{log.grade || '-'}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-xs text-gray-600 font-medium">{log.location_name}</div>

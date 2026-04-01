@@ -522,7 +522,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         </DetailSection>
 
         {/* b. Karier & Penempatan */}
-        <DetailSection icon={Briefcase} title="Karier">
+        <DetailSection icon={Briefcase} title="Karir">
           <div className="grid grid-cols-2 gap-4">
              <DataRow label="Jabatan" value={currentPosition} />
              <DataRow label="Departemen" value={currentGrade} />

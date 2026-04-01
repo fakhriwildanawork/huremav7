@@ -308,7 +308,7 @@ const LogForm: React.FC<LogFormProps> = ({ type, accountId, initialData, isEdit 
                 </div>
               </div>
               <div className="space-y-1">
-                <label htmlFor="schedule_id" className="text-[9px] font-bold text-gray-500 uppercase">Jadwal Kerja Baru</label>
+                <label htmlFor="schedule_id" className="text-[9px] font-bold text-gray-500 uppercase">Jadwal Kerja</label>
                 <div className="relative">
                   <select 
                     id="schedule_id"
@@ -330,7 +330,7 @@ const LogForm: React.FC<LogFormProps> = ({ type, accountId, initialData, isEdit 
                 </div>
               </div>
               <div className="space-y-1">
-                <label htmlFor="file_sk_id" className="text-[9px] font-bold text-gray-500 uppercase">Dokumen SK (PDF/Gambar)</label>
+                <label htmlFor="file_sk_id" className="text-[9px] font-bold text-gray-500 uppercase">Lampiran SK</label>
                 <div className={`flex items-center gap-3 p-2 bg-gray-50 border border-dashed rounded cursor-pointer hover:bg-white transition-colors ${formData.file_sk_id ? 'border-[#006E62]' : 'border-gray-200'}`}>
                   <label htmlFor="file_sk_id" className="flex items-center gap-2 cursor-pointer w-full">
                     <div className="p-2 bg-white rounded border border-gray-100 shrink-0">
@@ -340,7 +340,6 @@ const LogForm: React.FC<LogFormProps> = ({ type, accountId, initialData, isEdit 
                       <p className="text-[10px] font-bold text-gray-600 uppercase">
                         {uploading ? 'Sedang Mengunggah...' : formData.file_sk_id ? 'SK Terunggah' : 'Upload File SK'}
                       </p>
-                      <p className="text-[8px] text-gray-400 truncate">{formData.file_sk_id || 'ID akan tersimpan di G-Drive'}</p>
                     </div>
                     {formData.file_sk_id && (
                       <a 

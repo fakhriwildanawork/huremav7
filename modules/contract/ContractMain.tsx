@@ -51,14 +51,14 @@ const ContractMain: React.FC = () => {
     });
   };
 
-  const getStatusBadge = (endDate?: string | null) => {
-    if (!endDate) return <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">TETAP</span>;
+  const getStatusBadge = (endDate?: string | null, contractType?: string | null) => {
+    if (contractType === 'PKWTT' || !endDate) return <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">AKTIF</span>;
     
     const end = new Date(endDate);
     const now = new Date();
     const diff = (end.getTime() - now.getTime()) / (1000 * 3600 * 24);
 
-    if (diff < 0) return <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">HABIS</span>;
+    if (diff < 0) return <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">KADALUARSA</span>;
     if (diff < 30) return <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">AKAN HABIS</span>;
     return <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">AKTIF</span>;
   };
@@ -270,7 +270,7 @@ const ContractMain: React.FC = () => {
                       <div className="text-xs text-gray-600 font-medium">{formatDate(c.start_date)} - {formatDate(c.end_date)}</div>
                     </td>
                     <td className="px-6 py-4">
-                      {getStatusBadge(c.end_date)}
+                      {getStatusBadge(c.end_date, c.contract_type)}
                     </td>
                     <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-2">

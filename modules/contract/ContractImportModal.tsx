@@ -23,6 +23,20 @@ const ContractImportModal: React.FC<ContractImportModalProps> = ({ onClose, onSu
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    // Mitigation: Check for duplicate filenames in the current batch
+    const fileNames = (Array.from(files) as File[]).map(f => f.name.split('.').slice(0, -1).join('.'));
+    const duplicates = fileNames.filter((name, index) => fileNames.indexOf(name) !== index);
+    
+    if (duplicates.length > 0) {
+      Swal.fire({
+        title: 'File Duplikat',
+        text: `Ditemukan nama file yang sama dalam batch ini: [${duplicates.join(', ')}]. Harap pastikan setiap file memiliki nama yang unik agar sistem tidak bingung saat mapping.`,
+        icon: 'error'
+      });
+      if (e.target) e.target.value = '';
+      return;
+    }
+
     try {
       setIsUploadingAttachments(true);
       const newFiles: { name: string; id: string }[] = [];
@@ -228,7 +242,10 @@ const ContractImportModal: React.FC<ContractImportModalProps> = ({ onClose, onSu
                               {row.isValid ? (
                                 <CheckCircle size={14} className="text-emerald-500" />
                               ) : (
-                                <AlertTriangle size={14} className="text-red-500" />
+                                <div className="flex items-center gap-1 text-red-600 font-bold">
+                                  <AlertTriangle size={14} />
+                                  <span>{row.errorMsg}</span>
+                                </div>
                               )}
                             </td>
                             <td className="px-4 py-2 font-bold">{row.full_name}</td>
