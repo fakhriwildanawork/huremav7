@@ -305,7 +305,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                     />
                     {uploading['photo_google_id'] && <div className="absolute inset-0 bg-black/20 flex items-center justify-center"><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div></div>}
                   </div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase leading-tight">Foto Profil<br/><span className="font-normal italic">G-Drive Storage</span></div>
+                  <div className="text-[10px] text-gray-400 font-bold uppercase leading-tight">Foto Profil</div>
                 </div>
 
                   <div className="grid grid-cols-1 gap-3">
@@ -328,7 +328,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                         <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileUpload(e, 'ktp_google_id')} />
                         {uploading['ktp_google_id'] && <div className="absolute inset-0 bg-black/10 flex items-center justify-center"><div className="w-3 h-3 border-2 border-[#006E62] border-t-transparent rounded-full animate-spin"></div></div>}
                       </label>
-                      <div className="text-[8px] text-gray-400 font-bold uppercase leading-tight">Upload Scan KTP<br/><span className="font-normal italic">{formData.ktp_google_id ? 'Tersimpan' : 'Belum ada file'}</span></div>
+                      <div className="text-[8px] text-gray-400 font-bold uppercase leading-tight">Upload KTP<br/><span className="font-normal italic">{formData.ktp_google_id ? 'Tersimpan' : 'Belum ada file'}</span></div>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
@@ -399,7 +399,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                 <>
                   {!initialData && (
                     <>
-                      <SectionHeader icon={Briefcase} title="Karier & Penempatan" />
+                      <SectionHeader icon={Briefcase} title="Karier" />
                       <div className="space-y-3">
                         <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-1">
@@ -493,7 +493,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                         </div>
                         {!initialData && (
                           <div className="space-y-1 p-2 bg-gray-50 rounded border border-gray-100">
-                            <Label htmlFor="file_sk_id">Upload SK Awal (G-Drive)</Label>
+                            <Label htmlFor="file_sk_id">Upload SK</Label>
                             <div className="flex items-center gap-2 mt-1">
                               <label htmlFor="file_sk_id" className="flex items-center gap-2 px-3 py-1.5 bg-white border border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-100 transition-colors flex-1 overflow-hidden">
                                 {formData.file_sk_id ? (
@@ -550,7 +550,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                                 </div>
                               </div>
                               <div className="space-y-1">
-                                <Label htmlFor="contract_file">Upload PDF Kontrak</Label>
+                                <Label htmlFor="contract_file">Upload Kontrak</Label>
                                 <div className="flex items-center gap-2">
                                   <label htmlFor="contract_file" className="flex items-center gap-2 px-3 py-1.5 bg-white border border-dashed border-gray-300 rounded cursor-pointer hover:bg-gray-50 flex-1 overflow-hidden transition-colors">
                                     <Upload size={12} className="text-gray-400 shrink-0" />
@@ -567,7 +567,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
                     </>
                   )}
 
-                  <SectionHeader icon={GraduationCap} title="Pendidikan & Dokumen" />
+                  <SectionHeader icon={GraduationCap} title="Pendidikan" />
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
@@ -614,7 +614,7 @@ const AccountForm: React.FC<AccountFormProps> = ({ onClose, onSubmit, initialDat
 
             {/* Kolom Kanan: Pengaturan & Keamanan */}
             <div className="space-y-4">
-              <SectionHeader icon={ShieldCheck} title={isSelfEdit ? "Keamanan & Akses" : "Presensi & Keamanan"} />
+              <SectionHeader icon={ShieldCheck} title={isSelfEdit ? "Keamanan & Akses" : "Presensi & Akses"} />
               <div className="space-y-3">
                  {!isSelfEdit && (
                    <>
