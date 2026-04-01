@@ -40,7 +40,18 @@ const sanitizePayload = (payload: any) => {
 };
 
 export const accountService = {
-  async getAll(page?: number, limit?: number, searchQuery: string = '', statusFilter?: 'aktif' | 'non-aktif'): Promise<any> {
+  async getAll(
+    page?: number, 
+    limit?: number, 
+    searchQuery: string = '', 
+    statusFilter?: 'aktif' | 'non-aktif',
+    filters?: {
+      department?: string;
+      position?: string;
+      placement?: string;
+      employee_type?: string;
+    }
+  ): Promise<any> {
     let query = supabase
       .from('accounts')
       .select(`
@@ -51,6 +62,21 @@ export const accountService = {
 
     if (searchQuery) {
       query = query.or(`full_name.ilike.%${searchQuery}%,internal_nik.ilike.%${searchQuery}%,position.ilike.%${searchQuery}%`);
+    }
+
+    if (filters) {
+      if (filters.department) {
+        query = query.eq('grade', filters.department);
+      }
+      if (filters.position) {
+        query = query.eq('position', filters.position);
+      }
+      if (filters.placement) {
+        query = query.eq('location_id', filters.placement);
+      }
+      if (filters.employee_type) {
+        query = query.eq('employee_type', filters.employee_type);
+      }
     }
 
     const today = new Date().toISOString().split('T')[0];

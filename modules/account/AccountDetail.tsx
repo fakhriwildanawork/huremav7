@@ -314,6 +314,23 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
   const today = new Date().toISOString().split('T')[0];
   const isInactive = account.end_date && account.end_date <= today;
 
+  const getStatusStyle = (type: string, inactive: boolean) => {
+    if (inactive) return 'bg-red-50 text-red-600 border-red-100';
+    
+    switch (type) {
+      case 'Tetap':
+        return 'bg-[#006E62]/10 text-[#006E62] border-[#006E62]/20';
+      case 'Kontrak':
+        return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'Magang':
+        return 'bg-orange-50 text-orange-600 border-orange-100';
+      case 'Harian':
+        return 'bg-purple-50 text-purple-600 border-purple-100';
+      default:
+        return 'bg-gray-50 text-gray-500 border-gray-100';
+    }
+  };
+
   // Sync data with latest career log
   const latestCareer = careerLogs[0];
   const currentPosition = latestCareer?.position || account.position;
@@ -409,10 +426,9 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-3">
              <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{account.full_name}</h2>
-             <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded ${isInactive ? 'bg-gray-100 text-gray-400' : 'bg-[#006E62]/10 text-[#006E62]'}`}>
-               {account.employee_type}
+             <span className={`px-2 py-0.5 text-[10px] font-bold uppercase border rounded-full ${getStatusStyle(account.employee_type, !!isInactive)}`}>
+               {isInactive ? 'NON-AKTIF' : account.employee_type}
              </span>
-             {(termination || isInactive) && <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold uppercase rounded">NON-AKTIF</span>}
           </div>
           <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">{currentPosition} • {currentGrade} • {account.internal_nik}</p>
           <div className="flex flex-wrap gap-4 pt-2">
@@ -489,6 +505,12 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
              <DataRow label="Agama" value={account.religion} />
              <DataRow label="Status Nikah" value={account.marital_status} />
              <DataRow label="Tanggungan" value={account.dependents_count} />
+             <div>
+               <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-1">Status Karyawan</p>
+               <span className={`inline-block px-2 py-0.5 text-[10px] font-bold uppercase border rounded-full ${getStatusStyle(account.employee_type, !!isInactive)}`}>
+                 {isInactive ? 'NON-AKTIF' : account.employee_type}
+               </span>
+             </div>
           </div>
           <DataRow label="Scan KTP" value={account.ktp_google_id} isFile />
           <DataRow label="Alamat Domisili" value={account.address} />

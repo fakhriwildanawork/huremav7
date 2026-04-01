@@ -64,6 +64,21 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
   const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'aktif' | 'non-aktif'>('aktif');
+  const [departmentFilter, setDepartmentFilter] = useState('');
+  const [positionFilter, setPositionFilter] = useState('');
+  const [placementFilter, setPlacementFilter] = useState('');
+  const [employeeTypeFilter, setEmployeeTypeFilter] = useState('');
+  
+  const [filterOptions, setFilterOptions] = useState<{
+    departments: string[];
+    positions: string[];
+    placements: { id: string; name: string }[];
+  }>({
+    departments: [],
+    positions: [],
+    placements: []
+  });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const PAGE_SIZE = 25;
@@ -85,7 +100,29 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
     } else {
       fetchAccounts();
     }
-  }, [isSelfProfile, user, currentPage, statusFilter]);
+  }, [isSelfProfile, user, currentPage, statusFilter, departmentFilter, positionFilter, placementFilter, employeeTypeFilter]);
+
+  useEffect(() => {
+    if (!isSelfProfile) {
+      fetchFilterOptions();
+    }
+  }, [isSelfProfile]);
+
+  const fetchFilterOptions = async () => {
+    try {
+      const [attributes, locs] = await Promise.all([
+        accountService.getDistinctAttributes(),
+        locationService.getAll()
+      ]);
+      setFilterOptions({
+        departments: attributes.grades,
+        positions: attributes.positions,
+        placements: locs.map((l: any) => ({ id: l.id, name: l.name }))
+      });
+    } catch (error) {
+      console.error('Error fetching filter options:', error);
+    }
+  };
 
   const fetchSelfAccount = async () => {
     if (!user) return;
@@ -109,7 +146,18 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
   const fetchAccounts = async (search: string = searchTerm) => {
     try {
       setIsLoading(true);
-      const { data, count } = await accountService.getAll(currentPage, PAGE_SIZE, search, statusFilter);
+      const { data, count } = await accountService.getAll(
+        currentPage, 
+        PAGE_SIZE, 
+        search, 
+        statusFilter,
+        {
+          department: departmentFilter,
+          position: positionFilter,
+          placement: placementFilter,
+          employee_type: employeeTypeFilter
+        }
+      );
       setAccounts(data);
       setTotalCount(count);
     } catch (error) {
@@ -338,8 +386,23 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
   };
 
   const today = new Date().toISOString().split('T')[0];
-  
-  // Halaman Detail
+
+  const getStatusStyle = (type: string, inactive: boolean) => {
+    if (inactive) return 'bg-red-50 text-red-600 border-red-100';
+    
+    switch (type) {
+      case 'Tetap':
+        return 'bg-[#006E62]/10 text-[#006E62] border-[#006E62]/20';
+      case 'Kontrak':
+        return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'Magang':
+        return 'bg-orange-50 text-orange-600 border-orange-100';
+      case 'Harian':
+        return 'bg-purple-50 text-purple-600 border-purple-100';
+      default:
+        return 'bg-gray-50 text-gray-500 border-gray-100';
+    }
+  };
   if (selectedAccountId) {
     return (
       <div className="animate-in fade-in slide-in-from-right duration-300">
@@ -439,7 +502,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-3">
                <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{selfAccount.full_name}</h2>
-               <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-[#006E62]/10 text-[#006E62]">
+               <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${getStatusStyle(selfAccount.employee_type, !!(selfAccount.end_date && selfAccount.end_date <= today))}`}>
                  {selfAccount.employee_type}
                </span>
             </div>
@@ -604,62 +667,128 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
 
       {activeSubTab === 'data' ? (
         <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="relative flex-1 max-w-md flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  placeholder="Cari (Nama, NIK, Jabatan)..."
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#006E62] focus:border-transparent transition-all text-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setCurrentPage(1);
-                      fetchAccounts(searchTerm);
-                    }
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="relative flex-1 max-w-md flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <input
+                    type="text"
+                    placeholder="Cari (Nama, NIK, Jabatan)..."
+                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#006E62] focus:border-transparent transition-all text-sm"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setCurrentPage(1);
+                        fetchAccounts(searchTerm);
+                      }
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    setCurrentPage(1);
+                    fetchAccounts(searchTerm);
                   }}
-                />
-              </div>
-              <button
-                onClick={() => {
-                  setCurrentPage(1);
-                  fetchAccounts(searchTerm);
-                }}
-                className="bg-[#006E62] text-white p-2 rounded-md hover:bg-[#005a50] transition-colors"
-                title="Cari"
-              >
-                <Search size={18} />
-              </button>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              {selectedIds.length > 0 && (
-                <button 
-                  onClick={handleBulkDelete}
-                  className="flex items-center gap-2 bg-red-50 text-red-600 px-3 py-2 rounded-md border border-red-100 hover:bg-red-100 transition-all text-xs font-bold uppercase mr-2"
+                  className="bg-[#006E62] text-white p-2 rounded-md hover:bg-[#005a50] transition-colors"
+                  title="Cari"
                 >
-                  <Trash2 size={14} />
-                  Hapus ({selectedIds.length})
+                  <Search size={18} />
                 </button>
-              )}
+              </div>
               
-              <button 
-                onClick={() => setShowImportModal(true)}
-                className="flex items-center gap-2 bg-white text-[#006E62] border border-[#006E62] px-4 py-2 rounded-md hover:bg-emerald-50 transition-colors shadow-sm"
-              >
-                <FileUp size={18} />
-                <span className="font-bold text-sm uppercase tracking-tighter">Impor Massal</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {selectedIds.length > 0 && (
+                  <button 
+                    onClick={handleBulkDelete}
+                    className="flex items-center gap-2 bg-red-50 text-red-600 px-3 py-2 rounded-md border border-red-100 hover:bg-red-100 transition-all text-xs font-bold uppercase mr-2"
+                  >
+                    <Trash2 size={14} />
+                    Hapus ({selectedIds.length})
+                  </button>
+                )}
+                
+                <button 
+                  onClick={() => setShowImportModal(true)}
+                  className="flex items-center gap-2 bg-white text-[#006E62] border border-[#006E62] px-4 py-2 rounded-md hover:bg-emerald-50 transition-colors shadow-sm"
+                >
+                  <FileUp size={18} />
+                  <span className="font-bold text-sm uppercase tracking-tighter">Impor Massal</span>
+                </button>
 
-              <button 
-                onClick={() => { setEditingAccount(null); setShowForm(true); }}
-                className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm"
+                <button 
+                  onClick={() => { setEditingAccount(null); setShowForm(true); }}
+                  className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm"
+                >
+                  <Plus size={18} />
+                  <span className="font-bold text-sm uppercase tracking-tighter">Tambah Akun</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Dropdowns */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <select
+                className="bg-white border border-gray-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#006E62]"
+                value={departmentFilter}
+                onChange={(e) => {
+                  setDepartmentFilter(e.target.value);
+                  setSearchTerm('');
+                  setCurrentPage(1);
+                }}
               >
-                <Plus size={18} />
-                <span className="font-bold text-sm uppercase tracking-tighter">Tambah Akun</span>
-              </button>
+                <option value="">Semua Departemen</option>
+                {filterOptions.departments.map(dept => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
+
+              <select
+                className="bg-white border border-gray-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#006E62]"
+                value={positionFilter}
+                onChange={(e) => {
+                  setPositionFilter(e.target.value);
+                  setSearchTerm('');
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">Semua Jabatan</option>
+                {filterOptions.positions.map(pos => (
+                  <option key={pos} value={pos}>{pos}</option>
+                ))}
+              </select>
+
+              <select
+                className="bg-white border border-gray-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#006E62]"
+                value={placementFilter}
+                onChange={(e) => {
+                  setPlacementFilter(e.target.value);
+                  setSearchTerm('');
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">Semua Penempatan</option>
+                {filterOptions.placements.map(loc => (
+                  <option key={loc.id} value={loc.id}>{loc.name}</option>
+                ))}
+              </select>
+
+              <select
+                className="bg-white border border-gray-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#006E62]"
+                value={employeeTypeFilter}
+                onChange={(e) => {
+                  setEmployeeTypeFilter(e.target.value);
+                  setSearchTerm('');
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">Semua Status</option>
+                <option value="Tetap">Tetap</option>
+                <option value="Kontrak">Kontrak</option>
+                <option value="Magang">Magang</option>
+                <option value="Harian">Harian</option>
+              </select>
             </div>
           </div>
 
@@ -749,7 +878,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
                         <td className="px-6 py-4 text-xs font-mono text-gray-500" onClick={() => setSelectedAccountId(account.id)}>{account.internal_nik}</td>
                         <td className="px-6 py-4 text-xs text-gray-500" onClick={() => setSelectedAccountId(account.id)}>{(account as any).location?.name || '-'}</td>
                         <td className="px-6 py-4" onClick={() => setSelectedAccountId(account.id)}>
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 border border-gray-100 rounded uppercase ${isInactive ? 'bg-red-50 text-red-600' : 'bg-gray-50 text-gray-500'}`}>
+                          <span className={`text-[9px] font-bold px-2 py-1 border rounded-full uppercase ${getStatusStyle(account.employee_type, !!isInactive)}`}>
                             {isInactive ? 'NON-AKTIF' : account.employee_type}
                           </span>
                         </td>
