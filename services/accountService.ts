@@ -189,6 +189,7 @@ export const accountService = {
       location_id: newAccount.location_id,
       location_name: locData?.name || '-',
       schedule_id: newAccount.schedule_id,
+      schedule_type: newAccount.schedule_type,
       file_sk_id: file_sk_id || null,
       notes: 'Initial Career Record'
     }]);

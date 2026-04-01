@@ -128,12 +128,12 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
       created_at: new Date().toISOString()
     };
     
-    setAccounts(prev => [optimisticAccount, ...prev]);
+    setAccounts(prev => [...prev, optimisticAccount].sort((a, b) => a.full_name.localeCompare(b.full_name)));
     setShowForm(false);
 
     try {
       const created = await accountService.create(input);
-      setAccounts(prev => prev.map(acc => acc.id === tempId ? created : acc));
+      setAccounts(prev => prev.map(acc => acc.id === tempId ? created : acc).sort((a, b) => a.full_name.localeCompare(b.full_name)));
       Swal.fire({
         title: 'Berhasil!',
         text: 'Akun baru telah ditambahkan.',
@@ -246,7 +246,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
     setIsSaving(true);
     try {
       const updated = await accountService.update(id, input);
-      setAccounts(prev => prev.map(acc => acc.id === id ? updated : acc));
+      setAccounts(prev => prev.map(acc => acc.id === id ? updated : acc).sort((a, b) => a.full_name.localeCompare(b.full_name)));
       setEditingAccount(null);
       setShowForm(false);
       Swal.fire({
@@ -665,7 +665,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
 
           <div className="flex border-b border-gray-100">
             <button
-              onClick={() => { setStatusFilter('aktif'); setCurrentPage(1); }}
+              onClick={() => { setStatusFilter('aktif'); setCurrentPage(1); setSearchTerm(''); }}
               className={`px-6 py-3 text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 ${
                 statusFilter === 'aktif' ? 'border-[#006E62] text-[#006E62]' : 'border-transparent text-gray-400 hover:text-gray-600'
               }`}
@@ -674,7 +674,7 @@ const AccountMain: React.FC<AccountMainProps> = ({ user, setUser, isSelfProfile 
               Karyawan Aktif {statusFilter === 'aktif' && <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[9px] bg-[#006E62] text-white`}>{totalCount}</span>}
             </button>
             <button
-              onClick={() => { setStatusFilter('non-aktif'); setCurrentPage(1); }}
+              onClick={() => { setStatusFilter('non-aktif'); setCurrentPage(1); setSearchTerm(''); }}
               className={`px-6 py-3 text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 ${
                 statusFilter === 'non-aktif' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-400 hover:text-gray-600'
               }`}

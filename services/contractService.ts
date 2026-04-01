@@ -17,7 +17,7 @@ const sanitizePayload = (payload: any) => {
 };
 
 export const contractService = {
-  async getAllGlobal(page: number = 1, limit: number = 25, searchQuery: string = '', filterType: 'all' | 'ending_soon' | 'expired' = 'all') {
+  async getAllGlobal(page: number = 1, limit: number = 25, searchQuery: string = '', filterType: 'all' | 'active' | 'ending_soon' | 'expired' = 'all') {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
@@ -39,7 +39,12 @@ export const contractService = {
     }
 
     const today = new Date().toISOString().split('T')[0];
-    if (filterType === 'ending_soon') {
+    if (filterType === 'active') {
+      const thirtyDaysLater = new Date();
+      thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+      const thirtyDaysLaterStr = thirtyDaysLater.toISOString().split('T')[0];
+      query = query.or(`end_date.is.null,end_date.gt.${thirtyDaysLaterStr}`);
+    } else if (filterType === 'ending_soon') {
       const thirtyDaysLater = new Date();
       thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
       const thirtyDaysLaterStr = thirtyDaysLater.toISOString().split('T')[0];

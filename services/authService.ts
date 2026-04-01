@@ -37,6 +37,7 @@ export const authService = {
 
     const user: AuthUser = {
       ...data,
+      schedule: Array.isArray(data.schedule) ? data.schedule[0] : data.schedule,
       role,
       is_hr_admin: hrAdmins.includes(data.id),
       is_performance_admin: perfAdmins.includes(data.id),

@@ -495,7 +495,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         </DetailSection>
 
         {/* b. Karier & Penempatan */}
-        <DetailSection icon={Briefcase} title="Karier & Penempatan">
+        <DetailSection icon={Briefcase} title="Karier">
           <div className="grid grid-cols-2 gap-4">
              <DataRow label="Jabatan" value={currentPosition} />
              <DataRow label="Departemen" value={currentGrade} />
@@ -561,7 +561,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         </DetailSection>
 
         {/* d. Pendidikan & Dokumen */}
-        <DetailSection icon={GraduationCap} title="Pendidikan & Dokumen">
+        <DetailSection icon={GraduationCap} title="Pendidikan">
            <div>
              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-0.5">Pendidikan Terakhir</p>
              <p className="text-xs text-gray-700 font-medium leading-tight">{account.last_education} {account.major ? `- ${account.major}` : ''}</p>
@@ -782,7 +782,7 @@ const AccountDetail: React.FC<AccountDetailProps> = ({ id, onClose, onEdit, onDe
         {/* j. Status Kedisiplinan */}
         <DetailSection 
           icon={ShieldAlert} 
-          title="Status Kedisiplinan" 
+          title="Riwayat Peringatan" 
           onAdd={() => setShowWarningForm(true)} 
           isScrollable
         >

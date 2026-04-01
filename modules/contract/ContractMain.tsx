@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { FileBadge, Search, FileUp, Paperclip, UserCircle, Upload, FileText, AlertCircle, Calendar, Trash2, Edit2, X, Info } from 'lucide-react';
+import { FileBadge, Search, FileUp, Paperclip, UserCircle, Upload, FileText, AlertCircle, Calendar, Trash2, Edit2, X, Info, Filter, ChevronDown } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { contractService } from '../../services/contractService';
 import { googleDriveService } from '../../services/googleDriveService';
@@ -19,7 +19,7 @@ const ContractMain: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedContract, setSelectedContract] = useState<AccountContractExtended | null>(null);
   const [editingContract, setEditingContract] = useState<AccountContractExtended | null>(null);
-  const [filterType, setFilterType] = useState<'all' | 'ending_soon' | 'expired'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'active' | 'ending_soon' | 'expired'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const PAGE_SIZE = 25;
@@ -136,39 +136,6 @@ const ContractMain: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div 
-          onClick={() => { setFilterType('all'); setCurrentPage(1); }}
-          className={`p-4 rounded-md shadow-sm flex items-center gap-4 cursor-pointer transition-all border ${filterType === 'all' ? 'bg-blue-50 border-blue-200 ring-2 ring-blue-100' : 'bg-white border-gray-100 hover:bg-gray-50'}`}
-        >
-          <div className={`p-3 rounded-md ${filterType === 'all' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600'}`}><FileText size={24} /></div>
-          <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase">Total Kontrak Terdata</p>
-            <p className="text-xl font-bold text-gray-800">{filterType === 'all' ? totalCount : '-'}</p>
-          </div>
-        </div>
-        <div 
-          onClick={() => { setFilterType('ending_soon'); setCurrentPage(1); }}
-          className={`p-4 rounded-md shadow-sm flex items-center gap-4 cursor-pointer transition-all border ${filterType === 'ending_soon' ? 'bg-orange-50 border-orange-200 ring-2 ring-orange-100' : 'bg-white border-gray-100 hover:bg-gray-50'}`}
-        >
-          <div className={`p-3 rounded-md ${filterType === 'ending_soon' ? 'bg-orange-600 text-white' : 'bg-orange-50 text-orange-600'}`}><AlertCircle size={24} /></div>
-          <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase">Akan Berakhir (30 Hari)</p>
-            <p className="text-xl font-bold text-gray-800">{filterType === 'ending_soon' ? totalCount : '-'}</p>
-          </div>
-        </div>
-        <div 
-          onClick={() => { setFilterType('expired'); setCurrentPage(1); }}
-          className={`p-4 rounded-md shadow-sm flex items-center gap-4 cursor-pointer transition-all border ${filterType === 'expired' ? 'bg-red-50 border-red-200 ring-2 ring-red-100' : 'bg-white border-gray-100 hover:bg-gray-50'}`}
-        >
-          <div className={`p-3 rounded-md ${filterType === 'expired' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600'}`}><Calendar size={24} /></div>
-          <div>
-            <p className="text-[10px] font-bold text-gray-400 uppercase">Sudah Kadaluarsa</p>
-            <p className="text-xl font-bold text-gray-800">{filterType === 'expired' ? totalCount : '-'}</p>
-          </div>
-        </div>
-      </div>
-
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md flex gap-2">
           <div className="relative flex-1">
@@ -208,6 +175,23 @@ const ContractMain: React.FC = () => {
               <Trash2 size={18} /> Hapus ({selectedIds.length})
             </button>
           )}
+
+          <div className="relative group">
+            <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium">
+              <Filter size={18} />
+              <span>Filter: {filterType === 'all' ? 'Semua' : filterType === 'active' ? 'Aktif' : filterType === 'ending_soon' ? 'Akan Habis' : 'Kadaluarsa'}</span>
+              <ChevronDown size={16} />
+            </button>
+            <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="py-1">
+                <button onClick={() => { setFilterType('all'); setSearchTerm(''); }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50">Semua</button>
+                <button onClick={() => { setFilterType('active'); setSearchTerm(''); }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-[#006E62]">Aktif</button>
+                <button onClick={() => { setFilterType('ending_soon'); setSearchTerm(''); }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-orange-600">Akan Habis</button>
+                <button onClick={() => { setFilterType('expired'); setSearchTerm(''); }} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-red-600">Kadaluarsa</button>
+              </div>
+            </div>
+          </div>
+
           <button 
             onClick={() => setShowImportModal(true)}
             className="flex items-center gap-2 bg-[#006E62] text-white px-4 py-2 rounded-md hover:bg-[#005a50] transition-colors shadow-sm text-sm font-medium"
