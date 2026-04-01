@@ -32,9 +32,9 @@ export const contractService = {
     if (searchQuery) {
       const accountIds = await accountService.searchIds(searchQuery);
       if (accountIds.length > 0) {
-        query = query.or(`contract_number.ilike.%${searchQuery}%,account_id.in.(${accountIds.join(',')})`);
+        query = query.or(`contract_number.ilike.%${searchQuery}%,contract_type.ilike.%${searchQuery}%,account_id.in.(${accountIds.join(',')})`);
       } else {
-        query = query.ilike('contract_number', `%${searchQuery}%`);
+        query = query.or(`contract_number.ilike.%${searchQuery}%,contract_type.ilike.%${searchQuery}%`);
       }
     }
 
@@ -219,7 +219,7 @@ export const contractService = {
     // Add Description Row (Row 2)
     const descriptionRow = [
       'Jangan diubah', 'Referensi', 'Referensi', 'Wajib diisi',
-      'Pilih dari daftar', 'Format: YYYY-MM-DD', 'Format: YYYY-MM-DD', 'Opsional'
+      'Pilih dari daftar', 'Format: YYYY-MM-DD', 'Format: YYYY-MM-DD (Kosongkan jika PKWTT)', 'Opsional'
     ];
     wsImport.addRow(descriptionRow);
 
@@ -359,11 +359,21 @@ export const contractService = {
                 errorMsg = `Kolom wajib belum lengkap: [${cleanNames.join(', ')}]`;
               }
 
-              const isValid = !errorMsg;
-
               let contractType = String(row['Jenis Kontrak (*)'] || '').trim();
               if (contractType === 'PKWT (Kontrak)') contractType = 'PKWT';
               else if (contractType === 'PKWTT (Tetap)') contractType = 'PKWTT';
+
+              let startDate = formatExcelDate(row['Tgl Mulai (YYYY-MM-DD) (*)']);
+              let endDate = formatExcelDate(row['Tgl Akhir (YYYY-MM-DD) (*)']);
+
+              // Mitigation: PKWTT neutralization and non-PKWTT validation
+              if (contractType === 'PKWTT') {
+                endDate = null;
+              } else if (!endDate) {
+                errorMsg = errorMsg ? `${errorMsg}, Tanggal Akhir wajib diisi` : 'Tanggal Akhir wajib diisi';
+              }
+
+              const isValid = !errorMsg;
 
               return {
                 account_id: row['Account ID (Hidden)'],
@@ -371,8 +381,8 @@ export const contractService = {
                 internal_nik: row['NIK Internal'],
                 contract_number: contractNumber,
                 contract_type: contractType,
-                start_date: formatExcelDate(row['Tgl Mulai (YYYY-MM-DD) (*)']),
-                end_date: formatExcelDate(row['Tgl Akhir (YYYY-MM-DD) (*)']),
+                start_date: startDate,
+                end_date: endDate,
                 notes: row['Keterangan'] || null,
                 file_id: matchedFileId,
                 isValid,

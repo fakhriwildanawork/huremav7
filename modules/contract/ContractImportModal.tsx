@@ -157,7 +157,7 @@ const ContractImportModal: React.FC<ContractImportModalProps> = ({ onClose, onSu
       <div className="bg-white rounded-md shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in duration-200">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-[#006E62]">Impor Massal Perpanjangan Kontrak</h3>
+            <h3 className="text-base font-bold text-[#006E62]">Impor Massal Data Kontrak</h3>
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Tahap {step}: {step === 1 ? 'Unggah Data Kontrak' : 'Unggah Lampiran Kontrak'}</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
@@ -173,7 +173,7 @@ const ContractImportModal: React.FC<ContractImportModalProps> = ({ onClose, onSu
                   <FileUp size={32} />
                 </div>
                 <div className="text-center max-w-md">
-                  <h4 className="text-lg font-bold text-gray-800">1. Unggah Data Kontrak</h4>
+                  <h4 className="text-lg font-bold text-gray-800">Unggah Data Kontrak</h4>
                 </div>
 
                 <div className="flex items-center gap-3 mt-6 w-full max-w-md">
@@ -237,11 +237,14 @@ const ContractImportModal: React.FC<ContractImportModalProps> = ({ onClose, onSu
                             <td className="px-4 py-2">{row.start_date}</td>
                             <td className="px-4 py-2">{row.end_date || 'TETAP'}</td>
                             <td className="px-4 py-2">
-                              {!row.isValid && (
-                                <span className="text-red-600 font-medium">
-                                  {row.errorMsg || 'Data wajib belum lengkap'}
-                                </span>
-                              )}
+                              <div className="flex flex-col gap-1">
+                                {row.notes && <span className="text-gray-600">{row.notes}</span>}
+                                {!row.isValid && (
+                                  <span className="text-red-600 font-bold">
+                                    {row.errorMsg || 'Data wajib belum lengkap'}
+                                  </span>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -258,7 +261,7 @@ const ContractImportModal: React.FC<ContractImportModalProps> = ({ onClose, onSu
                   <Paperclip size={32} />
                 </div>
                 <div className="text-center max-w-md">
-                  <h4 className="text-lg font-bold text-gray-800">2. Unggah Lampiran Kontrak (Opsional)</h4>
+                  <h4 className="text-lg font-bold text-gray-800">Unggah Lampiran Kontrak (Opsional)</h4>
                   <p className="text-xs text-gray-500 mt-2">Unggah file Kontrak. Sistem akan mencocokkan nama file dengan Nomor Kontrak secara otomatis.</p>
                 </div>
 
