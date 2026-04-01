@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, MapPin, Grid, List as ListIcon, Filter, ArrowLeft } from 'lucide-react';
+import { Plus, Search, MapPin, Grid, List as ListIcon, Filter, ArrowLeft, AlertCircle } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { supabase } from '../../lib/supabase';
 import { locationService } from '../../services/locationService';
-import { Location, LocationInput } from '../../types';
+import { Location, LocationInput, LocationAdministration } from '../../types';
 import LocationForm from './LocationForm';
 import LocationDetail from './LocationDetail';
 import { CardSkeleton } from '../../components/Common/Skeleton';
@@ -19,8 +20,11 @@ const LocationMain: React.FC = () => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
 
+  const [administrations, setAdministrations] = useState<Record<string, LocationAdministration[]>>({});
+
   useEffect(() => {
     fetchLocations();
+    fetchAllAdministrations();
   }, []);
 
   const fetchLocations = async () => {
@@ -33,6 +37,39 @@ const LocationMain: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchAllAdministrations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('location_administrations')
+        .select('*')
+        .order('admin_date', { ascending: false });
+      
+      if (error) throw error;
+      
+      const grouped = (data as LocationAdministration[]).reduce((acc, admin) => {
+        if (!acc[admin.location_id]) acc[admin.location_id] = [];
+        acc[admin.location_id].push(admin);
+        return acc;
+      }, {} as Record<string, LocationAdministration[]>);
+      
+      setAdministrations(grouped);
+    } catch (error) {
+      console.error("Gagal memuat data administrasi:", error);
+    }
+  };
+
+  const checkIsExpired = (locationId: string) => {
+    const locAdmins = administrations[locationId] || [];
+    if (locAdmins.length === 0) return false;
+    
+    // Ambil data terbaru (sudah diurutkan berdasarkan admin_date desc)
+    const latest = locAdmins[0];
+    if (!latest.due_date) return false;
+    
+    const today = new Date().toISOString().split('T')[0];
+    return latest.due_date < today;
   };
 
   const handleCreate = async (input: LocationInput) => {
@@ -136,6 +173,15 @@ const LocationMain: React.FC = () => {
           onEdit={(loc) => { setEditingLocation(loc); setShowForm(true); }}
           onDelete={(id) => handleDelete(id)}
         />
+        
+        {/* Modals - Dipindahkan ke sini juga agar muncul saat di Detail View */}
+        {showForm && (
+          <LocationForm 
+            onClose={() => { setShowForm(false); setEditingLocation(null); }}
+            onSubmit={editingLocation ? (data) => handleUpdate(editingLocation.id, data) : handleCreate}
+            initialData={editingLocation || undefined}
+          />
+        )}
       </div>
     );
   }
@@ -192,25 +238,35 @@ const LocationMain: React.FC = () => {
         </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredLocations.map(location => (
-            <div 
-              key={location.id} 
-              onClick={() => setSelectedLocationId(location.id)}
-              className="group bg-white border border-gray-100 p-4 rounded-md shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-[#006E62]"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-[#006E62] group-hover:text-[#005a50] line-clamp-1 text-sm">{location.name}</h3>
-                <span className="text-[9px] font-bold text-gray-400 border border-gray-100 px-1.5 py-0.5 rounded uppercase">{location.location_type || 'Lokasi'}</span>
-              </div>
-              <p className="text-[11px] text-gray-500 mb-3 line-clamp-1">{location.address}</p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                  <MapPin size={10} /> {location.city}
+          {filteredLocations.map(location => {
+            const isExpired = checkIsExpired(location.id);
+            return (
+              <div 
+                key={location.id} 
+                onClick={() => setSelectedLocationId(location.id)}
+                className={`group border p-4 rounded-md shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 hover:border-l-[#006E62] relative ${
+                  isExpired ? 'bg-red-50 border-red-200 border-l-red-500' : 'bg-white border-gray-100 border-l-transparent'
+                }`}
+              >
+                {isExpired && (
+                  <div className="absolute top-2 right-2 text-red-500 animate-pulse">
+                    <AlertCircle size={16} />
+                  </div>
+                )}
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className={`font-bold line-clamp-1 text-sm ${isExpired ? 'text-red-700' : 'text-[#006E62] group-hover:text-[#005a50]'}`}>{location.name}</h3>
+                  <span className={`text-[9px] font-bold border px-1.5 py-0.5 rounded uppercase ${isExpired ? 'text-red-400 border-red-100' : 'text-gray-400 border-gray-100'}`}>{location.location_type || 'Lokasi'}</span>
                 </div>
-                <div className="text-[10px] text-gray-300">R: {location.radius}m</div>
+                <p className={`text-[11px] mb-3 line-clamp-1 ${isExpired ? 'text-red-600/70' : 'text-gray-500'}`}>{location.address}</p>
+                <div className="flex items-center justify-between">
+                  <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider ${isExpired ? 'text-red-400' : 'text-gray-400'}`}>
+                    <MapPin size={10} /> {location.city}
+                  </div>
+                  <div className={`text-[10px] ${isExpired ? 'text-red-300' : 'text-gray-300'}`}>R: {location.radius}m</div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="bg-white border border-gray-100 rounded-md overflow-hidden shadow-sm overflow-x-auto">

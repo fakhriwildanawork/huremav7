@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Edit2, Trash2, MapPin, Calendar, Clock, Image as ImageIcon, Phone, Target, Layers, Plus, FileText, ExternalLink, Paperclip, Navigation } from 'lucide-react';
+import { X, Edit2, Trash2, MapPin, Calendar, Clock, Image as ImageIcon, Phone, Target, Layers, Plus, FileText, ExternalLink, Paperclip, Navigation, AlertCircle } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Location, LocationAdministration } from '../../types';
 import { locationService } from '../../services/locationService';
@@ -148,6 +148,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
 
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}`;
 
+  const isExpired = administrations.length > 0 && administrations[0].due_date && administrations[0].due_date < new Date().toISOString().split('T')[0];
+
   return (
     <div className="bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row gap-8 p-6 md:p-8">
       {isSaving && <LoadingSpinner />}
@@ -161,7 +163,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
                 <Layers size={14} className="text-[#006E62]" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#006E62]">{location.location_type || 'Lokasi'}</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{location.name}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className={`text-2xl font-bold tracking-tight ${isExpired ? 'text-red-600' : 'text-gray-800'}`}>{location.name}</h2>
+                {isExpired && <AlertCircle size={20} className="text-red-500 animate-pulse" />}
+              </div>
             </div>
             <div className="flex gap-2">
               <button onClick={() => onEdit(location)} className="p-2 text-gray-400 hover:text-[#006E62] border border-gray-100 rounded hover:bg-gray-50 transition-all shadow-sm">
@@ -194,10 +199,26 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ id, onClose, onEdit, on
               <div className="flex items-start gap-2">
                 <MapPin size={12} className="text-gray-400 mt-0.5 shrink-0" />
                 <p className="text-xs text-gray-600 leading-relaxed font-medium">
-                  {location.address}, {location.city}, {location.province} {location.zip_code}
+                  {location.address}
                 </p>
               </div>
             </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-1">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Kota</p>
+                <p className="text-xs font-semibold text-gray-700">{location.city || '-'}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Provinsi</p>
+                <p className="text-xs font-semibold text-gray-700">{location.province || '-'}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Kode Pos</p>
+                <p className="text-xs font-semibold text-gray-700">{location.zip_code || '-'}</p>
+              </div>
+            </div>
+
             <div className="flex justify-between items-center bg-gray-50 p-3 rounded-md border border-gray-100">
               <div className="space-y-1">
                 <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Telepon</p>
