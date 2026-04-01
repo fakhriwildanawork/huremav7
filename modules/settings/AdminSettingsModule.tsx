@@ -181,16 +181,16 @@ const AdminSettingsModule: React.FC = () => {
 
         {/* Admin Performa */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-gray-50 bg-blue-50/50">
+          <div className="p-6 border-b border-gray-50 bg-orange-50/50">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+              <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
                 <Target size={20} />
               </div>
               <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Admin Performa</h3>
             </div>
             <p className="text-[10px] text-gray-500 leading-relaxed">Akses untuk mengelola KPI, Key Activities, dan Laporan Sales.</p>
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-[10px] font-black text-blue-600 bg-blue-100 px-2 py-1 rounded-md uppercase">
+              <span className="text-[10px] font-black text-orange-600 bg-orange-100 px-2 py-1 rounded-md uppercase">
                 {performanceAdmins.length} Terpilih
               </span>
             </div>
@@ -201,7 +201,7 @@ const AdminSettingsModule: React.FC = () => {
               <input
                 type="text"
                 placeholder="Cari Pegawai..."
-                className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-lg text-xs focus:ring-2 focus:ring-blue-500/20"
+                className="w-full pl-9 pr-4 py-2 bg-gray-50 border-none rounded-lg text-xs focus:ring-2 focus:ring-orange-500/20"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -213,12 +213,12 @@ const AdminSettingsModule: React.FC = () => {
                 key={acc.id}
                 onClick={() => toggleAdmin(acc.id, 'performance')}
                 className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
-                  performanceAdmins.includes(acc.id) ? 'bg-blue-50 border-blue-100' : 'hover:bg-gray-50 border-transparent'
+                  performanceAdmins.includes(acc.id) ? 'bg-orange-50 border-orange-100' : 'hover:bg-gray-50 border-transparent'
                 } border`}
               >
                 <div className="flex items-center gap-3 text-left">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                    performanceAdmins.includes(acc.id) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'
+                    performanceAdmins.includes(acc.id) ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-400'
                   }`}>
                     {acc.full_name.charAt(0)}
                   </div>
@@ -227,7 +227,7 @@ const AdminSettingsModule: React.FC = () => {
                     <p className="text-[10px] text-gray-400">{acc.internal_nik}</p>
                   </div>
                 </div>
-                {performanceAdmins.includes(acc.id) && <Check size={16} className="text-blue-600" />}
+                {performanceAdmins.includes(acc.id) && <Check size={16} className="text-orange-600" />}
               </button>
             ))}
           </div>
